@@ -1,0 +1,554 @@
+{
+  "solar-types:inverterItemType": [
+    "Central",
+    "String",
+    "MicroInverter",
+    "Distributed",
+    "Transformerless",
+    "Grounded"
+  ],
+  "solar-types:moduleTechnologyItemType": [
+    "Mono-C-Si",
+    "Multi-C-Si",
+    "Thin Film",
+    "Other"
+  ],
+  "solar-types:moduleItemType": [
+    "ASi",
+    "ASi - Triple",
+    "ASi - Tandem",
+    "ASi - Single",
+    "BiPv",
+    "BiFacial",
+    "CdTe",
+    "CIGS",
+    "CPV",
+    "CSi",
+    "MonoSi",
+    "MultiSi",
+    "PSi",
+    "TFSI",
+    "HIT",
+    "Ribbon",
+    "Other"
+  ],
+  "solar-types:trackerItemType": [
+    "Azimuth Axis Tracking",
+    "Fixed Tilt",
+    "Single Axis Tracking",
+    "Dual Axis Tracking",
+    "Seasonal Tilt",
+    "Other"
+  ],
+  "solar-types:solarSystemCharacterItemType": [
+    "Aggregate",
+    "Agricultural",
+    "Commercial",
+    "Community Solar",
+    "Industrial",
+    "Residential",
+    "Utility"
+  ],
+  "solar-types:internetConnectionItemType": [
+    "Cellular",
+    "Shared Broadband",
+    "Dedicated Broadband",
+    "Satellite",
+    "Other"
+  ],
+  "solar-types:occupancyItemType": [
+    "Owner Occupied",
+    "Rental"
+  ],
+  "solar-types:climateZoneANSIItemType": [
+    "Very Hot - Humid",
+    "Very Hot - Dry",
+    "Hot - Humid",
+    "Hot - Dry",
+    "Warm - Humid",
+    "Warm - Dry",
+    "Warm - Marine",
+    "Mixed - Humid",
+    "Mixed - Dry",
+    "Mixed - Marine",
+    "Cool - Humid",
+    "Cool - Dry",
+    "Cool - Marine",
+    "Cold - Humid",
+    "Cold - Dry",
+    "Very Cold",
+    "Subarctic"
+  ],
+  "solar-types:siteControlItemType": [
+    "Lease",
+    "Own",
+    "Rent"
+  ],
+  "solar-types:moduleOrientationItemType": [
+    "Portrait",
+    "Landscape"
+  ],
+  "solar-types:sPVOrCounterpartyItemType": [
+    "SPV",
+    "Counterparty"
+  ],
+  "solar-types:fundOrProjectItemType": [
+    "Fund",
+    "Project"
+  ],
+  "solar-types:fundStatusItemType": [
+    "Closed",
+    "Open",
+    "Committed"
+  ],
+  "solar-types:financingEventItemType": [
+    "Origination Request",
+    "Signing Non-binding Commitment",
+    "Signing Binding Commitment",
+    "Signing And Closing",
+    "Closing",
+    "Funding",
+    "Other"
+  ],
+  "solar-types:eventStatusItemType": [
+    "In Process",
+    "Finalized"
+  ],
+  "solar-types:participantItemType": [
+    "Appraiser",
+    "Asset Manager",
+    "Asset Owner",
+    "Automobile Liability Insurer",
+    "Back-leverage Lender",
+    "Back-up Asset Manager",
+    "Back-up Maintenance Provider",
+    "Back-up Monitoring Service Provider",
+    "Bond Agent",
+    "Builders/Construction All-Risk Insurers",
+    "Business Interruption Insurer",
+    "Collateral Agent",
+    "Commercial Lender",
+    "Contract Attorney",
+    "Construction Contractor/Installer",
+    "Construction Lender",
+    "Construction Warranty Provider",
+    "Corporate Attorney",
+    "Developer Attorney",
+    "Energy Forecasting Service",
+    "Energy Price Forecaster",
+    "Equipment Warranty Provider",
+    "Engineering Contractor/Installer",
+    "Environmental Attorney",
+    "Environmental Consultant",
+    "Equipment Factory Auditor",
+    "Equipment Manufacturer",
+    "Equipment Reliability Test Lab",
+    "Fund",
+    "General Contractor",
+    "General Liability Insurer",
+    "Hedge Provider",
+    "Independent Engineer",
+    "Independent System Operator as Authority Having Jurisdiction",
+    "Interconnecting Utility as Authority Having Jurisdiction",
+    "Insurance Broker",
+    "Insurance Consultant",
+    "Land-Use Attorney",
+    "Lessor",
+    "Litigation Attorney",
+    "LLC Partner Managing Member",
+    "LLC Partner Voting Member",
+    "LLC Partner Passive Member",
+    "Long-term Equity Investor",
+    "Maintenance Provider",
+    "Monitoring Service Provider",
+    "Ocean Cargo Insurer",
+    "Operator",
+    "Parallel Monitoring Service Provider",
+    "Permitting Authority as Authority Having Jurisdiction",
+    "Personal Lender",
+    "Pollution Liability Insurer",
+    "PPA Offtaker",
+    "Prime Contractor",
+    "Project",
+    "Project Performance Insurer",
+    "Project Developer",
+    "Project Host",
+    "Property Insurer",
+    "REC Offtaker",
+    "Regional Transmission Operator as Authority Having Jurisdiction",
+    "Scheduling Coordinator",
+    "Site Owner/Site Control",
+    "Site Security Company",
+    "Subcontractor",
+    "Subcontractor Contractor/Installer",
+    "Surety",
+    "Tax Attorney",
+    "Tax Consultant",
+    "Tax-equity Investor",
+    "Telecom Provider",
+    "Transmission Consultant",
+    "Trustee",
+    "Umbrella/Excess Liability Insurer",
+    "Utility",
+    "Weather Data Provider",
+    "Workers Compensation Insurer",
+    "Other"
+  ],
+  "solar-types:projectAssetTypeItemType": [
+    "Wind",
+    "Solar",
+    "Solar Plus Storage"
+  ],
+  "solar-types:projectClassItemType": [
+    "Utility Scale",
+    "Distributed Generation",
+    "Community Solar",
+    "Residential",
+    "Other"
+  ],
+  "solar-types:projectInterconnectionItemType": [
+    "Behind the Meter",
+    "Virtual Net Meter",
+    "In Front of Meter"
+  ],
+  "solar-types:projectStageItemType": [
+    "Under Development",
+    "In Construction",
+    "In Operation"
+  ],
+  "solar-types:investmentStatusItemType": [
+    "Awarded",
+    "Committed",
+    "Partial Funding",
+    "Fully Funded"
+  ],
+  "solar-types:regulatoryFacilityItemType": [
+    "QF",
+    "EWG",
+    "NA"
+  ],
+  "solar-types:regulatoryApprovalStatusItemType": [
+    "Not Submitted",
+    "Submitted",
+    "Approved",
+    "Declined"
+  ],
+  "solar-types:hedgeItemType": [
+    "Swap",
+    "Revenue Put",
+    "CfD",
+    "None",
+    "Other"
+  ],
+  "solar-types:divisionStateApprovalStatusItemType": [
+    "Not Submitted",
+    "Submitted",
+    "Conditional",
+    "Final Approval",
+    "Not Applicable"
+  ],
+  "solar-types:feeStatusItemType": [
+    "Not Applicable",
+    "Not Due",
+    "Overdue",
+    "Partially Paid",
+    "Fully Paid"
+  ],
+  "solar-types:zoningPermitPropertyItemType": [
+    "Plant",
+    "Gen Tie Line",
+    "Substation"
+  ],
+  "solar-types:energyBudgetPhaseItemType": [
+    "Closing",
+    "Initial Funding",
+    "Final Funding"
+  ],
+  "solar-types:titlePolicyInsuranceItemType": [
+    "Not Applicable",
+    "Not Issued",
+    "Pro Forma",
+    "Final"
+  ],
+  "solar-types:aLTASurveyItemType": [
+    "Not applicable",
+    "Not Received",
+    "Preliminary",
+    "Final"
+  ],
+  "solar-types:batteryConnectionItemType": [
+    "DC-Coupled",
+    "AC-Coupled"
+  ],
+  "solar-types:employeeRoleItemType": [
+    "Fund",
+    "Project"
+  ],
+  "solar-types:employeeLevelItemType": [
+    "Lead",
+    "Support"
+  ],
+  "solar-types:approvalRequestItemType": [
+    "Not submitted",
+    "Submitted",
+    "Conditional Approval",
+    "Final Approval",
+    "Declined"
+  ],
+  "solar-types:creditSupportStatusItemType": [
+    "Not Due",
+    "Over Due",
+    "Granted",
+    "Expired"
+  ],
+  "solar-types:securityInterestItemType": [
+    "Mortgage",
+    "Deed of Trust",
+    "Lien",
+    "Pledge",
+    "Collateral Assignment",
+    "Other"
+  ],
+  "solar-types:assetSecuredItemType": [
+    "Land",
+    "Membership Interest",
+    "Contract",
+    "Bank Account",
+    "Other"
+  ],
+  "solar-types:securityInterestStatusItemType": [
+    "Not Due",
+    "Over Due",
+    "Granted",
+    "Expired"
+  ],
+  "solar-types:inverterPhaseItemType": [
+    "Single Phase",
+    "Three Phase WYE",
+    "Three Phase Delta"
+  ],
+  "solar-types:approvalStatusItemType": [
+    "Closed",
+    "Open"
+  ],
+  "solar-types:DERItemType": [
+    "PV System",
+    "Storage",
+    "PV Storage",
+    "Wind",
+    "EV Charging Station"
+  ],
+  "solar-types:environmentalConditionsItemType": [
+    "Pollen",
+    "High Wind",
+    "Hail",
+    "Salt Air",
+    "Diesel Soot",
+    "Industrial Emmissions",
+    "Bird Populations",
+    "Dust",
+    "High Insolation"
+  ],
+  "solar-types:optimizerTypeItemType": [
+    "Standalone",
+    "Attached",
+    "Embedded",
+    "Other"
+  ],
+  "solar-types:systemAvailabilityModeItemType": [
+    "Emergency",
+    "Environment",
+    "Forced",
+    "Grid",
+    "Islanded",
+    "Shutdown",
+    "Standby"
+  ],
+  "solar-types:mountingItemType": [
+    "Attached",
+    "Ballasted",
+    "BIPV",
+    "Pole/Pier"
+  ],
+  "solar-types:roofSlopeItemType": [
+    "Flat",
+    "Sloped",
+    "Steep"
+  ],
+  "solar-types:roofItemType": [
+    "Asphalt Shingle",
+    "Built Up Bituminous",
+    "Composite Shingle",
+    "Ethylene Propylene Diene Terpolymer",
+    "Metal Roof",
+    "Poly Vinyl Chloride",
+    "SBS",
+    "Slate",
+    "Thermoplastic Polyolefin",
+    "Tile Concrete",
+    "Tile Roof",
+    "Wood Shingle"
+  ],
+  "solar-types:systemOperationalStatusItemType": [
+    "Operational",
+    "Under Maintenance",
+    "Communication Failure",
+    "Decommissioned"
+  ],
+  "solar-types:communicationProtocolItemType": [
+    "Modbus",
+    "Zigbee",
+    "WIFI",
+    "Ethernet"
+  ],
+  "solar-types:reserveCollateralItemType": [
+    "Letter of Credit",
+    "Cash"
+  ],
+  "solar-types:gISFileFormatItemType": [
+    "GEOJson",
+    "Shapefile",
+    "KML",
+    "GML"
+  ],
+  "solar-types:reserveUseItemType": [
+    "Rent",
+    "Maintenance",
+    "Other"
+  ],
+  "solar-types:deviceItemType": [
+    "ModuleMember",
+    "OptimizerMember",
+    "DCDisconnectSwitchMember",
+    "ACDisconnectSwitchMember",
+    "InverterMember",
+    "TrackerMember",
+    "CombinerMember",
+    "MetStationMember",
+    "TransformerMember",
+    "BatteryMember",
+    "BatteryManagementSystemMember",
+    "LoggerMember",
+    "MeterMember",
+    "StringMember",
+    "MountingMember"
+  ],
+  "solar-types:projectPhaseItemType": [
+    "Pre-Construction",
+    "Early Construction",
+    "Periodic Throughout Construction",
+    "Initial Funding/Mechanical Completion",
+    "Post-Funding"
+  ],
+  "solar-types:componentMaintenanceEventItemType": [
+    "Repair",
+    "Replace"
+  ],
+  "solar-types:financialContractItemType": [
+    "Lease",
+    "PPA",
+    "Cash",
+    "Upfront",
+    "PSA",
+    "Unknown"
+  ],
+  "solar-types:climateClassificationKoppenItemType": [
+    "2.1 Tropical/megathermal climates",
+    "2.1.1 Tropical rainforest climate",
+    "2.1.2 Tropical monsoon climate",
+    "2.1.3 Tropical wet and dry or savanna climates",
+    "2.2 Dry (desert and semi-arid) climates",
+    "2.3 Temperate/mesothermal climates",
+    "2.3.1 Mediterranean climates",
+    "2.3.2 Humid subtropical climates",
+    "2.3.3 Oceanic climates",
+    "2.3.4 Highland climates",
+    "2.4 Continental/microthermal climates",
+    "2.4.1 Hot summer continental climates",
+    "2.4.2 Warm summer continental or hemiboreal climates",
+    "2.4.3 Subarctic or boreal climates",
+    "2.5 Polar climates"
+  ],
+  "solar-types:financialTransactionItemType": [
+    "ACH Settlement Credit",
+    "Book Transfer Credit",
+    "Book Transfer Debit",
+    "Contribution to Principal Cash",
+    "Credit",
+    "Credit Applied",
+    "Customer Bill",
+    "Customer Payment",
+    "Customer Prepayment",
+    "Expected Prepayment",
+    "Expected Rebate",
+    "Fund Rebate",
+    "Lease Insurance",
+    "Lease Management Fee",
+    "Lease Miscellaneous Expenses",
+    "Lease Operations and Maintenance",
+    "Lease Transaction Manager Fee",
+    "Operating Expenses",
+    "PPA Insurance",
+    "PPA Management Fee",
+    "PPA Miscellaneous Expenses",
+    "PPA Operations and Maintenance",
+    "PPA Transaction Manager Fee",
+    "Principal Cash Paid to Beneficiary",
+    "Remote Deposit Credit",
+    "Teller Deposit Credit"
+  ],
+  "solar-types:distributedGenOrUtilityScaleItemType": [
+    "Distributed Generation",
+    "Utility Scale"
+  ],
+  "solar-types:sparePartsStatusItemType": [
+    "Sufficient",
+    "Insufficient"
+  ],
+  "solar-types:preventiveMaintenanceTaskStatusItemType": [
+    "Complete",
+    "Incomplete"
+  ],
+  "solar-types:eventSeverityItemType": [
+    "Low",
+    "Moderate",
+    "High"
+  ],
+  "solar-types:mORLevelItemType": [
+    "Site Level",
+    "Fund Level",
+    "Project Level"
+  ],
+  "solar-types:batteryChemistryItemType": [
+    "LiOn",
+    "Pb",
+    "NiCad"
+  ],
+  "solar-types:insuranceItemType": [
+    "Liability",
+    "Property",
+    "Commercial General Liability",
+    "Business Interruption",
+    "Property Casualty",
+    "Casualty",
+    "Workmans Compensation",
+    "Energy Production",
+    "Performance",
+    "Universal",
+    "Warranty",
+    "Surety Advance Payment Bond",
+    "Surety Engineering Procurement Construction Surety Payment Bond",
+    "Surety Engineering Procurement Construction Payment Bond With Solar Module Supplier Sublimits As Dual Obligee",
+    "Surety Interconnection Payment Bond",
+    "Surety On Bill Finance Energy Efficiency Upgrades",
+    "Surety Utility Payment Bond",
+    "Surety On Bill Finance Solar Projects Utility Payment Bond",
+    "Surety Power Purchase Agreement Surety Payment Bond",
+    "Surety Solar Facility Decommissioning Bond",
+    "Surety Solar Module Payment Bond",
+    "Surety Solar Module Supply Bond",
+    "Surety Solar Module Warranty Security Bond",
+    "Electronic Surety Bond Provider Module Warranty Security",
+    "Electronic Surety Bond Provider Power Purchase Agreement Payment Bond."
+  ]
+}
