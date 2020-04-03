@@ -17,11 +17,11 @@
             class="navbar-icons clickable"
             v-b-modal.settings-modal
           />
-          <v-icon
+          <!-- <v-icon
             name="question-circle"
             class="navbar-icons clickable"
             v-b-modal.help-modal
-          />
+          /> -->
         </div>
       </b-navbar-nav>
     </b-navbar>
@@ -33,7 +33,7 @@
         <h5>Dependencies Loaded:</h5>
         <p>
           <u>Master Solar Taxonomy:</u> <br />
-          <i>Master-Solar-Taxonomy-030420.json</i>
+          <i>Master-Solar-Taxonomy-040120.json</i>
         </p>
         <p>
           <u>Master Orange Button OpenAPI Definition File:</u> <br />
@@ -41,7 +41,7 @@
         </p>
       </template>
     </b-modal>
-    <b-modal id="help-modal">This will have basic help information</b-modal>
+    <!-- <b-modal id="help-modal">This will have basic help information</b-modal> -->
   </div>
 </template>
 
