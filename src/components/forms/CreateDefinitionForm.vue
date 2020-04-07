@@ -120,12 +120,18 @@ import utrTypes from "@/assets/type_files/utr-units.json";
 
 export default {
   created() {
+    let solar_types = []
+    let utr_types = []
     Object.keys(solarTypes).forEach(key => {
-      this.OBItemTypes.push(key);
+      solar_types.push(key);
     });
     Object.keys(utrTypes).forEach(key => {
-      this.OBItemTypes.push(key);
+      utr_types.push(key);
     });
+    solar_types.sort()
+    utr_types.sort()
+    this.OBItemTypes = this.OBItemTypes.concat(solar_types).concat(utr_types)
+
   },
   data() {
     return {
@@ -184,20 +190,22 @@ export default {
   },
   computed: {
     itemTypeUnits() {
-      this.selectedOBUnits = null;
-      this.selectedOBEnum = null;
+      this.selectedOBUnits = '';
+      this.selectedOBEnum = '';
       let retArr = [];
       if (this.selectedOBItemType) {
         if (this.selectedOBItemType.includes("solar-types")) {
           this.selectedOBEnum = solarTypes[this.selectedOBItemType];
+
           retArr = [{ Attributes: "OB Enum", Values: this.selectedOBEnum }];
         } else {
           this.selectedOBUnits = utrTypes[this.selectedOBItemType];
+
           retArr = [{ Attributes: "OB Units", Values: this.selectedOBUnits }];
         }
       }
 
-      return retArr;
+      return retArr
     },
     fileElements() {
       if (this.selectedFileName) {
