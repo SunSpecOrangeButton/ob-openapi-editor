@@ -338,5 +338,6 @@
   "num-us:planeAngleItemType": [
     "Degree",
     "Radian"
-  ]
+  ],
+  "xbrli:stringItemType": []
 }

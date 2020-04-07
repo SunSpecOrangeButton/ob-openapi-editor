@@ -8,16 +8,16 @@
     "Grounded"
   ],
   "solar-types:moduleTechnologyItemType": [
-    "Mono-C-Si",
-    "Multi-C-Si",
+    "Mono_C_Si",
+    "Multi_C_Si",
     "Thin Film",
     "Other"
   ],
   "solar-types:moduleItemType": [
     "ASi",
-    "ASi - Triple",
-    "ASi - Tandem",
-    "ASi - Single",
+    "ASi_Triple",
+    "ASi_Tandem",
+    "ASi_Single",
     "BiPv",
     "BiFacial",
     "CdTe",
@@ -61,21 +61,21 @@
     "Rental"
   ],
   "solar-types:climateZoneANSIItemType": [
-    "Very Hot - Humid",
-    "Very Hot - Dry",
-    "Hot - Humid",
-    "Hot - Dry",
-    "Warm - Humid",
-    "Warm - Dry",
-    "Warm - Marine",
-    "Mixed - Humid",
-    "Mixed - Dry",
-    "Mixed - Marine",
-    "Cool - Humid",
-    "Cool - Dry",
-    "Cool - Marine",
-    "Cold - Humid",
-    "Cold - Dry",
+    "Very Hot Humid",
+    "Very Hot Dry",
+    "Hot Humid",
+    "Hot Dry",
+    "Warm Humid",
+    "Warm Dry",
+    "Warm Marine",
+    "Mixed Humid",
+    "Mixed Dry",
+    "Mixed Marine",
+    "Cool Humid",
+    "Cool Dry",
+    "Cool Marine",
+    "Cold Humid",
+    "Cold Dry",
     "Very Cold",
     "Subarctic"
   ],
@@ -103,7 +103,7 @@
   ],
   "solar-types:financingEventItemType": [
     "Origination Request",
-    "Signing Non-binding Commitment",
+    "Signing Non_binding Commitment",
     "Signing Binding Commitment",
     "Signing And Closing",
     "Closing",
@@ -119,17 +119,17 @@
     "Asset Manager",
     "Asset Owner",
     "Automobile Liability Insurer",
-    "Back-leverage Lender",
-    "Back-up Asset Manager",
-    "Back-up Maintenance Provider",
-    "Back-up Monitoring Service Provider",
+    "Back_leverage Lender",
+    "Back_up Asset Manager",
+    "Back_up Maintenance Provider",
+    "Back_up Monitoring Service Provider",
     "Bond Agent",
-    "Builders/Construction All-Risk Insurers",
+    "Builders_Construction All_Risk Insurers",
     "Business Interruption Insurer",
     "Collateral Agent",
     "Commercial Lender",
     "Contract Attorney",
-    "Construction Contractor/Installer",
+    "Construction Contractor Installer",
     "Construction Lender",
     "Construction Warranty Provider",
     "Corporate Attorney",
@@ -137,7 +137,7 @@
     "Energy Forecasting Service",
     "Energy Price Forecaster",
     "Equipment Warranty Provider",
-    "Engineering Contractor/Installer",
+    "Engineering Contractor Installer",
     "Environmental Attorney",
     "Environmental Consultant",
     "Equipment Factory Auditor",
@@ -152,13 +152,13 @@
     "Interconnecting Utility as Authority Having Jurisdiction",
     "Insurance Broker",
     "Insurance Consultant",
-    "Land-Use Attorney",
+    "Land_Use Attorney",
     "Lessor",
     "Litigation Attorney",
     "LLC Partner Managing Member",
     "LLC Partner Voting Member",
     "LLC Partner Passive Member",
-    "Long-term Equity Investor",
+    "Longterm Equity Investor",
     "Maintenance Provider",
     "Monitoring Service Provider",
     "Ocean Cargo Insurer",
@@ -177,18 +177,18 @@
     "REC Offtaker",
     "Regional Transmission Operator as Authority Having Jurisdiction",
     "Scheduling Coordinator",
-    "Site Owner/Site Control",
+    "Site Owner Site Control",
     "Site Security Company",
     "Subcontractor",
-    "Subcontractor Contractor/Installer",
+    "Subcontractor Contractor Installer",
     "Surety",
     "Tax Attorney",
     "Tax Consultant",
-    "Tax-equity Investor",
+    "Tax equity Investor",
     "Telecom Provider",
     "Transmission Consultant",
     "Trustee",
-    "Umbrella/Excess Liability Insurer",
+    "Umbrella Excess Liability Insurer",
     "Utility",
     "Weather Data Provider",
     "Workers Compensation Insurer",
@@ -277,8 +277,8 @@
     "Final"
   ],
   "solar-types:batteryConnectionItemType": [
-    "DC-Coupled",
-    "AC-Coupled"
+    "DC_Coupled",
+    "AC_Coupled"
   ],
   "solar-types:employeeRoleItemType": [
     "Fund",
@@ -368,7 +368,7 @@
     "Attached",
     "Ballasted",
     "BIPV",
-    "Pole/Pier"
+    "Pole_Pier"
   ],
   "solar-types:roofSlopeItemType": [
     "Flat",
@@ -434,11 +434,11 @@
     "MountingMember"
   ],
   "solar-types:projectPhaseItemType": [
-    "Pre-Construction",
+    "Pre_Construction",
     "Early Construction",
     "Periodic Throughout Construction",
-    "Initial Funding/Mechanical Completion",
-    "Post-Funding"
+    "Initial Funding Mechanical Completion",
+    "Post_Funding"
   ],
   "solar-types:componentMaintenanceEventItemType": [
     "Repair",
@@ -453,21 +453,21 @@
     "Unknown"
   ],
   "solar-types:climateClassificationKoppenItemType": [
-    "2.1 Tropical/megathermal climates",
-    "2.1.1 Tropical rainforest climate",
-    "2.1.2 Tropical monsoon climate",
-    "2.1.3 Tropical wet and dry or savanna climates",
-    "2.2 Dry (desert and semi-arid) climates",
-    "2.3 Temperate/mesothermal climates",
-    "2.3.1 Mediterranean climates",
-    "2.3.2 Humid subtropical climates",
-    "2.3.3 Oceanic climates",
-    "2.3.4 Highland climates",
-    "2.4 Continental/microthermal climates",
-    "2.4.1 Hot summer continental climates",
-    "2.4.2 Warm summer continental or hemiboreal climates",
-    "2.4.3 Subarctic or boreal climates",
-    "2.5 Polar climates"
+    "Tropical megathermal climates",
+    "Tropical rainforest climate",
+    "Tropical monsoon climate",
+    "Tropical wet and dry or savanna climates",
+    "Dry desert and semi_arid climates",
+    "Temperate mesothermal climates",
+    "Mediterranean climates",
+    "Humid subtropical climates",
+    "Oceanic climates",
+    "Highland climates",
+    "Continental microthermal climates",
+    "Hot summer continental climates",
+    "Warm summer continental or hemiboreal climates",
+    "Subarctic or boreal climates",
+    "Polar climates"
   ],
   "solar-types:financialTransactionItemType": [
     "ACH Settlement Credit",
@@ -549,6 +549,12 @@
     "Surety Solar Module Supply Bond",
     "Surety Solar Module Warranty Security Bond",
     "Electronic Surety Bond Provider Module Warranty Security",
-    "Electronic Surety Bond Provider Power Purchase Agreement Payment Bond."
+    "Electronic Surety Bond Provider Power Purchase Agreement Payment Bond"
+  ],
+  "solar-types:uuidItemType": [
+    "([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})|(\\{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\})"
+  ],
+  "solar-types:uuidXbrlItemType": [
+    "([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})|(\\{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\})"
   ]
 }
