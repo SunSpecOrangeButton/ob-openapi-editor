@@ -279,7 +279,7 @@ export default {
       if (this.children) {
         Object.keys(this.children).forEach(key => {
           isLocal = true;
-          fileReference = this.file.file;
+          fileReference = this.referenceFile;
           refFileContext = "LOCAL";
           isTaxonomyElement = false;
 
@@ -300,17 +300,17 @@ export default {
             }
           } else {
             fileReference = this.children[key]["referenceFile"];
+            refFileContext = miscUtilities.getRefFileContext(
+              this.children[key]["$ref"]
+            );
 
-            if (!fileReference[key]) {
-              refFileContext = miscUtilities.getRefFileContext(
-                this.children[key]["$ref"]
-              );
+            if (!fileReference[key] || refFileContext != "LOCAL") {
               fileReference = this.$store.state.loadedFiles[refFileContext][
                 "file"
               ];
+              isLocal = false;
             }
 
-            isLocal = false;
           }
 
           fromSuperClass = false;

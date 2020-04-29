@@ -460,9 +460,6 @@ export default new Vuex.Store({
       JSONEditor.loadInDefinition(currentFile, defnName, defnFile);
     },
     editItemType(state, payload) {
-      console.log(payload);
-
-      console.log(state.currentFile.file[state.isSelected]);
 
       state.nodeOBType = payload.OBItemType;
       state.nodeOBUnit = payload.OBUnits;
