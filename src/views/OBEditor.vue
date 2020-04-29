@@ -939,7 +939,7 @@ export default {
           .concat(immutable_lst);
 
         returnArr = returnArr.filter(node => {
-          return node[0].includes(this.treeSearchTerm);
+          return node[0].toLowerCase().includes(this.treeSearchTerm.toLowerCase());
         });
 
         this.filteredCount = returnArr.length;
