@@ -280,11 +280,6 @@ export default {
           "allOf"
         ] !== undefined
       ) {
-        console.log(
-          this.$store.state.currentFile.file[this.$store.state.isSelected][
-            "allOf"
-          ].length
-        );
         if (
           this.$store.state.currentFile.file[this.$store.state.isSelected][
             "allOf"
