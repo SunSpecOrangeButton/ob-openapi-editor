@@ -58,7 +58,7 @@
             importedNodeSignifier: importedNode
           }"
         >
-          <span v-if="isArray && !expandDefn">
+          <span v-if="isArray">
             {{ shortenName + " " }}[ {{ arrayItemNameFromRef }} ]
           </span>
           <span v-else>
