@@ -110,6 +110,18 @@
         <b-button v-if="preSubmit" @click="showDetailedView">Cancel</b-button>
       </span>
     </b-form>
+    <b-modal
+      id="modal-create-node"
+      title="Attention"
+      ref="create-modal-warning"
+      centered
+      no-stacking
+      v-model="submissionError"
+    >
+      <p>
+        {{ submissionErrorMsg }}
+      </p>
+    </b-modal>
   </div>
 </template>
 
@@ -139,6 +151,8 @@ export default {
       definitionType: null,
       definitionDescription: null,
       preSubmit: true,
+      submissionError: false,
+      submissionErrorMsg: "",
       OBDataTypes: [
         "OB Object",
         "OB Array",
@@ -167,6 +181,24 @@ export default {
       this.$store.commit("showDetailedView");
     },
     createElement() {
+      if(!this.definitionType) {
+        this.submissionErrorMsg = "Please select a definition type.";
+        this.submissionError = true;
+        return;
+      } else if(!this.definitionName) {
+        this.submissionErrorMsg = "Please enter a definition name.";
+        this.submissionError = true;
+        return;
+      } else if(this.definitionType === "OB Array" && (!this.selectedFileName || !this.selectedDefnName)) {
+        this.submissionErrorMsg = "Please select a file and an array item.";
+        this.submissionError = true;
+        return;
+      } else if(this.definitionType.substring(0,19) === "OB Taxonomy Element" && !this.selectedOBItemType) {
+        this.submissionErrorMsg = "Please select an OB Item Type."
+        this.submissionError = true;
+        return;
+      }
+      
       let payload = {
         definitionName: this.definitionName,
         definitionType: this.definitionType,
