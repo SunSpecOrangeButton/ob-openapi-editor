@@ -35,7 +35,7 @@
                   <b-form-input
                     class="tree-search-bar"
                     v-model="treeSearchTerm"
-                    placeholder="Search across element names..."
+                    placeholder="Search element names... (wildcard: * )"
                   >
                   </b-form-input>
                 </div>
@@ -939,7 +939,7 @@ export default {
           .concat(immutable_lst);
 
         returnArr = returnArr.filter(node => {
-          return node[0].toLowerCase().includes(this.treeSearchTerm.toLowerCase());
+            return miscUtilities.wildcardSearch(node[0].toLowerCase(), this.treeSearchTerm.toLowerCase());
         });
 
         this.filteredCount = returnArr.length;

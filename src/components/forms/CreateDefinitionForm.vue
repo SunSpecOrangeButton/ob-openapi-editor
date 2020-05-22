@@ -83,6 +83,12 @@
         ></b-form-select>
         <br />
         <div>Select definition to use as array item:</div>
+        <b-form-input
+            class="array-item-search-bar"
+            v-model="arrayItemSearchTerm"
+            placeholder="Search item names... (wildcard: * )"
+          >
+          </b-form-input>
         <div class="file-elements-list">
           <span v-if="selectedFileName">
             <li
@@ -161,6 +167,7 @@ export default {
         "OB Taxonomy Element Integer",
         "OB Taxonomy Element Boolean"
       ],
+      arrayItemSearchTerm: "",
       selectedFileName: null,
       selectedDefnIndex: null,
       selectedDefnName: null,
@@ -247,13 +254,12 @@ export default {
       if (this.selectedFileName) {
         let fileElements = Object.keys(
           this.$store.state.loadedFiles[this.selectedFileName]["file"]
-        );
+        ).sort();
 
         return fileElements
           .filter(node => {
-            return node.toLowerCase().includes(this.searchTerm.toLowerCase());
-          })
-          .sort();
+            return miscUtilities.wildcardSearch(node.toLowerCase(), this.arrayItemSearchTerm.toLowerCase());
+          });
       }
     },
     getLoadedFiles() {
@@ -444,5 +450,10 @@ export default {
 .create-element-container {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.array-item-search-bar {
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 </style>
