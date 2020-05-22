@@ -189,6 +189,10 @@ export default {
         this.submissionErrorMsg = "Please enter a definition name.";
         this.submissionError = true;
         return;
+      } else if(!this.definitionDescription) {
+        this.submissionErrorMsg = "Please enter a definition description.";
+        this.submissionError = true;
+        return;
       } else if(this.definitionType === "OB Array" && (!this.selectedFileName || !this.selectedDefnName)) {
         this.submissionErrorMsg = "Please select a file and an array item.";
         this.submissionError = true;
