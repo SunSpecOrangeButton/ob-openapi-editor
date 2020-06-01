@@ -15,7 +15,7 @@
       >
         <b-form-input
           v-model="searchTerm"
-          placeholder="Search for definition..."
+          placeholder="Search for definition... (wildcard: *)"
         ></b-form-input>
       </b-form-group>
       <div>Select definition to load in:</div>
@@ -100,7 +100,7 @@ export default {
 
       return fileElements
         .filter(node => {
-          return node.toLowerCase().includes(this.searchTerm.toLowerCase());
+          return miscUtilities.wildcardSearch(node.toLowerCase(), this.searchTerm.toLowerCase());
         })
         .sort();
     },
