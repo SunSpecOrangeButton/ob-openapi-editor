@@ -20,7 +20,7 @@ Component for adding inheritance to objects
       >
         <b-form-input
           v-model="searchTerm"
-          placeholder="Search for definition..."
+          placeholder="Search for definition... (wildcard: *)"
         ></b-form-input>
       </b-form-group>
       <div>Select definition to add:</div>
@@ -132,7 +132,7 @@ export default {
             if (
               node.toLowerCase() != this.$store.state.isSelected.toLowerCase()
             ) {
-              return node.toLowerCase().includes(this.searchTerm.toLowerCase());
+              return miscUtilities.wildcardSearch(node.toLowerCase(), this.searchTerm.toLowerCase());
             }
           })
           .sort();

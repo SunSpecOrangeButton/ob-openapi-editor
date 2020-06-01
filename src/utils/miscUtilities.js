@@ -534,3 +534,28 @@ export function getArrayItemType(arrItemRef, loadedFiles, currentFile) {
 
   return arrItemType;
 }
+
+export function wildcardSearch(searchSubject, searchTerm) {
+  if(searchTerm.includes("*")) {
+
+    let searchTermSubstrings = searchTerm.split("*");
+    let substringStart = 0;
+    
+    // searchSubject must contain searchTermSubstrings' elements in order as typed.
+    for(let i = 0; i < searchTermSubstrings.length; i++) {
+      if(searchTermSubstrings[i] === "") {
+        continue;
+      }
+      if(i === 0 && searchSubject.indexOf(searchTermSubstrings[i]) !== 0) {
+        return false;
+      }
+      substringStart = searchSubject.indexOf(searchTermSubstrings[i], substringStart);
+      if(substringStart < 0)
+        return false;
+      substringStart += searchTermSubstrings[i].length;
+    }
+    return true;
+  }
+
+  return searchSubject.indexOf(searchTerm) == 0;
+}

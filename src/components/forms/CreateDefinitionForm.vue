@@ -83,6 +83,12 @@
         ></b-form-select>
         <br />
         <div>Select definition to use as array item:</div>
+        <b-form-input
+            class="array-item-search-bar"
+            v-model="arrayItemSearchTerm"
+            placeholder="Search item names... (wildcard: * )"
+          >
+          </b-form-input>
         <div class="file-elements-list">
           <span v-if="selectedFileName">
             <li
@@ -110,6 +116,18 @@
         <b-button v-if="preSubmit" @click="showDetailedView">Cancel</b-button>
       </span>
     </b-form>
+    <b-modal
+      id="modal-create-node"
+      title="Attention"
+      ref="create-modal-warning"
+      centered
+      no-stacking
+      v-model="submissionError"
+    >
+      <p>
+        {{ submissionErrorMsg }}
+      </p>
+    </b-modal>
   </div>
 </template>
 
@@ -139,6 +157,8 @@ export default {
       definitionType: null,
       definitionDescription: null,
       preSubmit: true,
+      submissionError: false,
+      submissionErrorMsg: "",
       OBDataTypes: [
         "OB Object",
         "OB Array",
@@ -147,6 +167,7 @@ export default {
         "OB Taxonomy Element Integer",
         "OB Taxonomy Element Boolean"
       ],
+      arrayItemSearchTerm: "",
       selectedFileName: null,
       selectedDefnIndex: null,
       selectedDefnName: null,
@@ -167,6 +188,28 @@ export default {
       this.$store.commit("showDetailedView");
     },
     createElement() {
+      if(!this.definitionType) {
+        this.submissionErrorMsg = "Please select a definition type.";
+        this.submissionError = true;
+        return;
+      } else if(!this.definitionName) {
+        this.submissionErrorMsg = "Please enter a definition name.";
+        this.submissionError = true;
+        return;
+      } else if(!this.definitionDescription) {
+        this.submissionErrorMsg = "Please enter a definition description.";
+        this.submissionError = true;
+        return;
+      } else if(this.definitionType === "OB Array" && (!this.selectedFileName || !this.selectedDefnName)) {
+        this.submissionErrorMsg = "Please select a file and an array item.";
+        this.submissionError = true;
+        return;
+      } else if(this.definitionType.substring(0,19) === "OB Taxonomy Element" && !this.selectedOBItemType) {
+        this.submissionErrorMsg = "Please select an OB Item Type."
+        this.submissionError = true;
+        return;
+      }
+      
       let payload = {
         definitionName: this.definitionName,
         definitionType: this.definitionType,
@@ -211,13 +254,12 @@ export default {
       if (this.selectedFileName) {
         let fileElements = Object.keys(
           this.$store.state.loadedFiles[this.selectedFileName]["file"]
-        );
+        ).sort();
 
         return fileElements
           .filter(node => {
-            return node.toLowerCase().includes(this.searchTerm.toLowerCase());
-          })
-          .sort();
+            return miscUtilities.wildcardSearch(node.toLowerCase(), this.arrayItemSearchTerm.toLowerCase());
+          });
       }
     },
     getLoadedFiles() {
@@ -408,5 +450,10 @@ export default {
 .create-element-container {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.array-item-search-bar {
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 </style>
