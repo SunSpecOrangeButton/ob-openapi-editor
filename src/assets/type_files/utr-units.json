@@ -339,5 +339,9 @@
     "Degree",
     "Radian"
   ],
-  "xbrli:stringItemType": []
+  "xbrli:stringItemType": [],
+  "num-us:insolationItemType": [],
+  "num-us:irradianceItemType": [],
+  "num-us:speedItemType": [],
+  "num-us:luminousIntensityItemType": []
 }
