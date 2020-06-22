@@ -343,5 +343,6 @@
   "num-us:insolationItemType": [],
   "num-us:irradianceItemType": [],
   "num-us:speedItemType": [],
-  "num-us:luminousIntensityItemType": []
+  "num-us:luminousIntensityItemType": [],
+  "xbrli:dateItemType": []
 }
