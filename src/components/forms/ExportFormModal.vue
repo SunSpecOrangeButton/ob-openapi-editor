@@ -1,5 +1,5 @@
 <template>
-  <div id="export-form-container" tabindex="0">
+  <div id="export-form-container">
     <b-modal ref="export-form" id="export-modal" title="Export settings">
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button
