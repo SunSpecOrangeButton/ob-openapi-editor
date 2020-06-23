@@ -1,13 +1,5 @@
 <template>
-  <div
-    @keyup.enter="
-      exportFile();
-      exportModalOpened();
-      formSubmit();
-    "
-    id="export-form-container"
-    tabindex="0"
-  >
+  <div id="export-form-container" tabindex="0">
     <b-modal ref="export-form" id="export-modal" title="Export settings">
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button
@@ -24,7 +16,6 @@
         <b-button
           size="sm"
           variant="danger"
-          type="button"
           @click="
             cancel();
             exportModalOpened();
