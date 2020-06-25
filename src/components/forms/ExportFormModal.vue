@@ -25,7 +25,7 @@
         </b-button>
       </template>
 
-      <b-form @submit='
+      <b-form @submit.prevent='
         exportFile();
         exportModalOpened();
         closeWindow();
