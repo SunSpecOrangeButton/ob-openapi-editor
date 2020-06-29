@@ -1,6 +1,6 @@
 <template>
   <div id="export-form-container">
-    <b-modal id="export-modal" title="Export settings">
+    <b-modal ref='export-window' id="export-modal" title="Export settings">
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button
           size="sm"
@@ -25,7 +25,11 @@
         </b-button>
       </template>
 
-      <b-form>
+      <b-form @submit.prevent='
+        exportFile();
+        exportModalOpened();
+        closeWindow();
+      '>
         <b-form-group
           id="export-form-filename"
           label="File name:*"
@@ -83,6 +87,9 @@ export default {
     },
     exportModalOpened() {
       this.$store.commit("toggleExportModal");
+    },
+    closeWindow() {
+        this.$refs['export-window'].hide();
     }
   },
   watch: {
