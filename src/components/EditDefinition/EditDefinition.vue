@@ -4,15 +4,13 @@ Is the parent of all the editing components
 
 <template>
   <div class="edit-node-container">
-    <component :is="changeEditingView"> </component>
+    <component :is="changeEditingView"></component>
 
     <span
       class="edit-form-buttons"
       v-if="$store.state.activeEditingView == 'EditDefinitionFormDisabled'"
     >
-      <b-button class="edit-btn" variant="secondary" @click="editDefinition">
-        Edit Description
-      </b-button>
+      <b-button class="edit-btn" variant="secondary" @click="editDefinition">Edit Description</b-button>
       <b-button
         class="edit-btn"
         v-if="
@@ -20,25 +18,19 @@ Is the parent of all the editing components
         "
         variant="secondary"
         @click="addMember"
-      >
-        Add member
-      </b-button>
+      >Add member</b-button>
       <b-button
         class="edit-btn"
         v-if="$store.state.nodeType == 'object'"
         variant="secondary"
         @click="addInheritance"
-      >
-        Add Inheritance
-      </b-button>
+      >Add Inheritance</b-button>
       <b-button
         class="edit-btn"
         v-if="$store.state.nodeType == 'object'"
         variant="secondary"
         @click="removeInheritance"
-      >
-        Remove Inheritance
-      </b-button>
+      >Remove Inheritance</b-button>
       <b-button
         class="edit-btn"
         v-if="
@@ -46,9 +38,7 @@ Is the parent of all the editing components
         "
         variant="secondary"
         @click="addEnum"
-      >
-        Add Enumeration
-      </b-button>
+      >Add Enumeration</b-button>
       <b-button
         class="edit-btn"
         v-if="
@@ -56,9 +46,7 @@ Is the parent of all the editing components
         "
         variant="secondary"
         @click="removeEnum"
-      >
-        Remove Enumeration
-      </b-button>
+      >Remove Enumeration</b-button>
       <b-button
         class="edit-btn"
         v-if="
@@ -66,9 +54,8 @@ Is the parent of all the editing components
         "
         variant="secondary"
         @click="editItemType"
-      >
-        Edit Item Type
-      </b-button>
+      >Edit Item Type</b-button>
+      <b-button class="edit-btn" variant="secondary" @click="editUsageTips">Edit Usage Tips</b-button>
     </span>
     <div
       class="previous-view-button"
@@ -88,6 +75,7 @@ import RemoveInheritance from "./RemoveInheritance.vue";
 import AddEnum from "./AddEnum.vue";
 import RemoveEnum from "./RemoveEnum.vue";
 import EditItemType from "./EditItemType.vue";
+import EditUsageTips from "./EditUsageTips";
 
 import * as JSONEditor from "../../utils/JSONEditor.js";
 import * as miscUtilities from "../../utils/miscUtilities.js";
@@ -101,7 +89,8 @@ export default {
     RemoveInheritance,
     AddEnum,
     RemoveEnum,
-    EditItemType
+    EditItemType,
+    EditUsageTips
   },
   data() {
     return {
@@ -158,6 +147,9 @@ export default {
     },
     editItemType() {
       this.$store.state.activeEditingView = "EditItemType";
+    },
+    editUsageTips() {
+      this.$store.state.activeEditingView = "EditUsageTips";
     }
   },
   computed: {

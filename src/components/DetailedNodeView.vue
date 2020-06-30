@@ -1,12 +1,7 @@
 <template>
   <div class="detailed-view-container">
     <span v-if="$store.state.isSelected">
-      <b-table
-        :fields="fields"
-        :items="defnDetails"
-        id="detailsTable"
-        ref="nodeDetailTable"
-      ></b-table>
+      <b-table :fields="fields" :items="defnDetails" id="detailsTable" ref="nodeDetailTable"></b-table>
       <div class="detailed-view-buttons">
         <span v-if="$store.state.inOASTab">
           <b-button
@@ -15,29 +10,25 @@
             size="sm"
             @click="showEditNodeView"
             :disabled="!$store.state.defnIsLocal"
-            >Edit definition</b-button
-          >
+          >Edit definition</b-button>
           <b-button
             v-else
             variant="primary"
             size="sm"
             v-b-modal.modal-edit-node
             :disabled="!$store.state.defnIsLocal"
-            >Edit definition</b-button
-          >
+          >Edit definition</b-button>
 
           <b-button v-b-modal.modal-delete-node variant="danger" size="sm">
-            <span v-if="$store.state.nodeParent == 'root'"> Delete </span>
-            <span v-else>Remove </span>
+            <span v-if="$store.state.nodeParent == 'root'">Delete</span>
+            <span v-else>Remove</span>
           </b-button>
         </span>
       </div>
     </span>
     <div class="error-container">
       <span v-if="showError">
-        <p id="error-msg">
-          Can't remove inherited objects, remove inheritance instead
-        </p>
+        <p id="error-msg">Can't remove inherited objects, remove inheritance instead</p>
       </span>
     </div>
 
@@ -168,6 +159,7 @@ export default {
       let defnOBType = this.$store.state.nodeOBType;
       let defnOBUnit = this.$store.state.nodeOBUnit;
       let defnOBEnum = this.$store.state.nodeOBEnum;
+      let defnOBUsageTips = this.$store.state.nodeOBUsageTips;
 
       this.refreshFields = !this.refreshFields;
 
@@ -185,6 +177,10 @@ export default {
 
       if (!defnOBEnum) {
         defnOBEnum = "None";
+      }
+
+      if (!defnOBUsageTips) {
+        defnOBUsageTips = "None";
       }
 
       if (!temp_enum) {
@@ -222,7 +218,8 @@ export default {
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
-          { Attributes: "Superclasses", Values: temp_superClassListStr }
+          { Attributes: "Superclasses", Values: temp_superClassListStr },
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else if (this.$store.state.isTaxonomyElement) {
         temp_ret_obj = [
@@ -233,7 +230,8 @@ export default {
           { Attributes: "OB Item Type", Values: defnOBType },
           { Attributes: "OB Unit", Values: defnOBUnit },
           { Attributes: "OB Enumeration", Values: defnOBEnum },
-          { Attributes: "Superclasses", Values: temp_superClassListStr }
+          { Attributes: "Superclasses", Values: temp_superClassListStr },
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else if (defnDoc[this.$store.state.isSelected]["type"] == "array") {
         arrayItemName = defnDoc[this.$store.state.isSelected]["items"][
@@ -247,13 +245,15 @@ export default {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
-          { Attributes: "Array Item", Values: arrayItemName }
+          { Attributes: "Array Item", Values: arrayItemName },
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
-          { Attributes: "Documentation", Values: temp_doc }
+          { Attributes: "Documentation", Values: temp_doc },
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       }
 

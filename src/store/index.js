@@ -64,9 +64,29 @@ export default new Vuex.Store({
 
     nodeOBType: "",
     nodeOBUnit: "",
-    nodeOBEnum: ""
+    nodeOBEnum: "",
+    nodeOBUsageTips: ""
   },
   mutations: {
+    /*
+      Add usage tips to object
+    */
+    addUsageTips(state, usageTips) {
+      state.nodeOBUsageTips = usageTips
+      // check if it is an allOf obj or a regular obj
+      // should move function to JSONEditor
+      // should use type to check if allOf, Obj or TaxElem
+      if (state.currentFile.file[state.isSelected]["allOf"]) {
+        for (let i in state.currentFile.file[state.isSelected]["allOf"]) {
+          if (state.currentFile.file[state.isSelected]["allOf"][i]["type"]) {
+            state.currentFile.file[state.isSelected]["allOf"][i]["x-ob-usage-tips"] = usageTips;
+          }
+        }
+      } else {
+        state.currentFile.file[state.isSelected]["x-ob-usage-tips"] = usageTips;
+      }
+    },
+
     /* 
       Add enumeration to object
     */
@@ -193,12 +213,12 @@ export default new Vuex.Store({
 
             if (
               state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                "x-ob-item-type"
+              "x-ob-item-type"
               ]
             ) {
               state.nodeOBType =
                 state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                  "x-ob-item-type"
+                "x-ob-item-type"
                 ];
             } else {
               state.nodeOBType = "";
@@ -206,12 +226,12 @@ export default new Vuex.Store({
 
             if (
               state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                "x-ob-unit"
+              "x-ob-unit"
               ]
             ) {
               state.nodeOBUnit =
                 state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                  "x-ob-unit"
+                "x-ob-unit"
                 ];
             } else {
               state.nodeOBUnit = "";
@@ -219,23 +239,63 @@ export default new Vuex.Store({
 
             if (
               state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                "x-ob-enum"
+              "x-ob-enum"
               ]
             ) {
               state.nodeOBEnum =
                 state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                  "x-ob-enum"
+                "x-ob-enum"
                 ];
             } else {
               state.nodeOBEnum = "";
             }
+
+            if (
+              state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+              "x-ob-usage-tips"
+              ]
+            ) {
+              state.nodeOBUsageTips =
+                state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+                "x-ob-usage-tips"
+                ];
+            } else {
+              state.nodeOBUsageTips = "";
+            }
           }
+        }
+      } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "object") {
+        if (
+          state.selectedDefnRefFile[state.isSelected][
+          "x-ob-usage-tips"
+          ]
+        ) {
+          state.nodeOBUsageTips =
+            state.selectedDefnRefFile[state.isSelected][
+            "x-ob-usage-tips"
+            ];
+        } else {
+          state.nodeOBUsageTips = "";
+        }
+      } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "array") {
+        if (
+          state.selectedDefnRefFile[state.isSelected][
+          "x-ob-usage-tips"
+          ]
+        ) {
+          state.nodeOBUsageTips =
+            state.selectedDefnRefFile[state.isSelected][
+            "x-ob-usage-tips"
+            ];
+        } else {
+          state.nodeOBUsageTips = "";
         }
       } else {
         state.nodeEnum = null;
         state.nodeOBEnum = "";
         state.nodeOBType = "";
         state.nodeOBUnit = "";
+        state.nodeOBUsageTips = "";
       }
     },
 
