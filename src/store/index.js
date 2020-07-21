@@ -65,9 +65,28 @@ export default new Vuex.Store({
     nodeOBType: "",
     nodeOBUnit: "",
     nodeOBEnum: "",
-    nodeOBUsageTips: ""
+    nodeOBUsageTips: "",
+    nodeOBSampleValue: "",
   },
   mutations: {
+    /*
+      Add sample value to object
+    */
+    addSampleValue(state, sampleValue) {
+      state.nodeOBSampleValue = sampleValue
+      // check if it is an allOf obj or a regular obj
+      // should move function to JSONEditor
+      // should use type to check if allOf, Obj or TaxElem
+      if (state.currentFile.file[state.isSelected]["allOf"]) {
+        for (let i in state.currentFile.file[state.isSelected]["allOf"]) {
+          if (state.currentFile.file[state.isSelected]["allOf"][i]["type"]) {
+            state.currentFile.file[state.isSelected]["allOf"][i]["x-ob-sample-value"] = sampleValue;
+          }
+        }
+      } else {
+        state.currentFile.file[state.isSelected]["x-ob-sample-value"] = sampleValue;
+      }
+    },
     /*
       Add usage tips to object
     */
@@ -262,6 +281,19 @@ export default new Vuex.Store({
             } else {
               state.nodeOBUsageTips = "";
             }
+
+            if (
+              state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+              "x-ob-sample-value"
+              ]
+            ) {
+              state.nodeOBSampleValue =
+                state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+                "x-ob-sample-value"
+                ];
+            } else {
+              state.nodeOBSampleValue = "";
+            }
           }
         }
       } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "object") {
@@ -277,6 +309,19 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
+
+        if (
+          state.selectedDefnRefFile[state.isSelected][
+          "x-ob-sample-value"
+          ]
+        ) {
+          state.nodeOBSampleValue =
+            state.selectedDefnRefFile[state.isSelected][
+            "x-ob-sample-value"
+            ];
+        } else {
+          state.nodeOBSampleValue = "";
+        }
       } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "array") {
         if (
           state.selectedDefnRefFile[state.isSelected][
@@ -290,12 +335,26 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
+
+        if (
+          state.selectedDefnRefFile[state.isSelected][
+          "x-ob-sample-value"
+          ]
+        ) {
+          state.nodeOBSampleValue =
+            state.selectedDefnRefFile[state.isSelected][
+            "x-ob-sample-value"
+            ];
+        } else {
+          state.nodeOBSampleValue = "";
+        }
       } else {
         state.nodeEnum = null;
         state.nodeOBEnum = "";
         state.nodeOBType = "";
         state.nodeOBUnit = "";
         state.nodeOBUsageTips = "";
+        state.nodeOBSampleValue = "";
       }
     },
 

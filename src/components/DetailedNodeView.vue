@@ -160,6 +160,7 @@ export default {
       let defnOBUnit = this.$store.state.nodeOBUnit;
       let defnOBEnum = this.$store.state.nodeOBEnum;
       let defnOBUsageTips = this.$store.state.nodeOBUsageTips;
+      let defnOBSampleValue = this.$store.state.nodeOBSampleValue;
 
       this.refreshFields = !this.refreshFields;
 
@@ -181,6 +182,10 @@ export default {
 
       if (!defnOBUsageTips) {
         defnOBUsageTips = "None";
+      }
+
+      if (!defnOBSampleValue) {
+        defnOBSampleValue = "None";
       }
 
       if (!temp_enum) {
@@ -219,7 +224,8 @@ export default {
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
           { Attributes: "Superclasses", Values: temp_superClassListStr },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips },
+          { Attributes: "Sample Value", Values: defnOBSampleValue },
         ];
       } else if (this.$store.state.isTaxonomyElement) {
         temp_ret_obj = [
@@ -231,7 +237,8 @@ export default {
           { Attributes: "OB Unit", Values: defnOBUnit },
           { Attributes: "OB Enumeration", Values: defnOBEnum },
           { Attributes: "Superclasses", Values: temp_superClassListStr },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips },
+          { Attributes: "Sample Value", Values: defnOBSampleValue }
         ];
       } else if (defnDoc[this.$store.state.isSelected]["type"] == "array") {
         arrayItemName = defnDoc[this.$store.state.isSelected]["items"][
@@ -246,14 +253,16 @@ export default {
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Array Item", Values: arrayItemName },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips },
+          { Attributes: "Sample Value", Values: defnOBSampleValue }
         ];
       } else {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips },
+          { Attributes: "Sampe Value", Values: defnOBSampleValue }
         ];
       }
 
