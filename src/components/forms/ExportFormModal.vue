@@ -1,57 +1,50 @@
 <template>
-  <div id="export-form-container">
-    <b-modal ref='export-window' id="export-modal" title="Export settings">
-      <template v-slot:modal-footer="{ ok, cancel }">
-        <b-button
-          size="sm"
-          variant="primary"
-          @click="
-            ok();
-            exportFile();
-            exportModalOpened();
-          "
-        >
-          Save As
-        </b-button>
-        <b-button
-          size="sm"
-          variant="danger"
-          @click="
-            cancel();
-            exportModalOpened();
-          "
-        >
-          Cancel
-        </b-button>
-      </template>
+  <b-modal id="export-modal" :title=$store.state.exportModalHeader v-model="$store.state.exportModalOpened" @show="resetModal">
+    <template v-slot:modal-footer>
+      <b-button
+        size="sm"
+        variant="primary"
+        @click="
+          exportFile();
+        "
+      >
+        Save
+      </b-button>
+      <b-button
+        size="sm"
+        variant="danger"
+        @click="
+          closeExportModal();
+        "
+      >
+        Cancel
+      </b-button>
+    </template>
 
-      <b-form @submit.prevent='
-        exportFile();
-        exportModalOpened();
-        closeWindow();
-      '>
-        <b-form-group
-          id="export-form-filename"
-          label="File name:*"
-          label-for="export-input-filename"
+    <b-form @submit.prevent='
+      exportFile();
+    '>
+      <b-form-group
+        id="export-form-filename"
+        label="File name:*"
+        label-for="export-input-filename"
+      >
+        <b-form-input
+          id="export-input-filename"
+          v-model="exportForm.filename"
+          placeholder="Enter file name"
+          required
         >
-          <b-form-input
-            id="export-input-filename"
-            v-model="exportForm.filename"
-            placeholder="Enter file name"
-            required
-          >
-          </b-form-input>
-        </b-form-group>
-      </b-form>
-      <p v-if="$store.state.currentFile">
-        You have
-        <strong>{{ $store.state.currentFile.fileName }}</strong> selected, this
-        is the file that will be exported
-      </p>
-      <p>**Will save as .json</p>
-    </b-modal>
-  </div>
+        </b-form-input>
+      </b-form-group>
+    </b-form>
+    <p v-if="$store.state.currentFile">
+      You have
+      <strong>{{ $store.state.fileToExportName }}</strong> selected, this
+      is the file that will be saved.
+    </p>
+    <p>**Will save as .json</p>
+  </b-modal>
 </template>
 
 <script>
@@ -76,6 +69,7 @@ export default {
       let exportObj = {
         type: "exportFile",
         filename: this.exportForm.filename,
+        file: this.$store.state.fileToExport,
         info: {
           description: "Description placeholder",
           title: "Title placeholder",
@@ -84,16 +78,12 @@ export default {
       };
 
       this.$store.commit(exportObj);
+      this.closeExportModal();
     },
-    exportModalOpened() {
-      this.$store.commit("toggleExportModal");
+    closeExportModal() {
+      this.$store.commit("setShowExportModal", false);
     },
-    closeWindow() {
-        this.$refs['export-window'].hide();
-    }
-  },
-  watch: {
-    "$store.state.exportModalOpened"() {
+    resetModal() {
       for (let property in this.exportForm) {
         this.exportForm[property] = null;
       }

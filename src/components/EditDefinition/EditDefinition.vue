@@ -56,6 +56,7 @@ Is the parent of all the editing components
         @click="editItemType"
       >Edit Item Type</b-button>
       <b-button class="edit-btn" variant="secondary" @click="editUsageTips">Edit Usage Tips</b-button>
+      <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement" @click="editSampleValue">Edit Sample Value</b-button>
     </span>
     <div
       class="previous-view-button"
@@ -76,6 +77,7 @@ import AddEnum from "./AddEnum.vue";
 import RemoveEnum from "./RemoveEnum.vue";
 import EditItemType from "./EditItemType.vue";
 import EditUsageTips from "./EditUsageTips";
+import EditSampleValue from "./EditSampleValue";
 
 import * as JSONEditor from "../../utils/JSONEditor.js";
 import * as miscUtilities from "../../utils/miscUtilities.js";
@@ -90,7 +92,8 @@ export default {
     AddEnum,
     RemoveEnum,
     EditItemType,
-    EditUsageTips
+    EditUsageTips,
+    EditSampleValue
   },
   data() {
     return {
@@ -150,6 +153,9 @@ export default {
     },
     editUsageTips() {
       this.$store.state.activeEditingView = "EditUsageTips";
+    },
+    editSampleValue() {
+      this.$store.state.activeEditingView = "EditSampleValue";
     }
   },
   computed: {

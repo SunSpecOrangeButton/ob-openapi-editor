@@ -16,6 +16,7 @@ export default new Vuex.Store({
     nodeName: null,
     nodeType: null,
     nodeParent: null,
+    nodeParentTrail: null,
     nodeDescription: null,
     nodeEnum: null,
     nameRef: null,
@@ -31,7 +32,7 @@ export default new Vuex.Store({
     refreshCreateDefn: false,
     isSubClassedNode: false,
 
-    // tracks whether exportModal has been opened, needed so a watcher can reset the export form.
+    // controls if the ExportFormModal is showing or not
     exportModalOpened: false,
     xbrlFlat: [],
 
@@ -56,6 +57,10 @@ export default new Vuex.Store({
     selectedFileName: "",
     selectedDefnRefFile: null,
 
+    fileToExport: null,
+    fileToExportName: "",
+    exportModalHeader: "",
+
     defnIsLocal: null,
 
     activeEditingView: "EditDefinitionFormDisabled",
@@ -65,9 +70,28 @@ export default new Vuex.Store({
     nodeOBType: "",
     nodeOBUnit: "",
     nodeOBEnum: "",
-    nodeOBUsageTips: ""
+    nodeOBUsageTips: "",
+    nodeOBSampleValue: {},
   },
   mutations: {
+    /*
+      Add sample value to object
+    */
+    addSampleValue(state, sampleValue) {
+      state.nodeOBSampleValue = sampleValue
+      // check if it is an allOf obj or a regular obj
+      // should move function to JSONEditor
+      // should use type to check if allOf, Obj or TaxElem
+      if (state.currentFile.file[state.isSelected]["allOf"]) {
+        for (let i in state.currentFile.file[state.isSelected]["allOf"]) {
+          if (state.currentFile.file[state.isSelected]["allOf"][i]["type"]) {
+            state.currentFile.file[state.isSelected]["allOf"][i]["x-ob-sample-value"] = sampleValue;
+          }
+        }
+      } else {
+        state.currentFile.file[state.isSelected]["x-ob-sample-value"] = sampleValue;
+      }
+    },
     /*
       Add usage tips to object
     */
@@ -187,6 +211,7 @@ export default new Vuex.Store({
       state.isSelected = payload.nodeName;
       state.nodeName = payload.nodeName;
       state.nodeParent = payload.nodeParent;
+      state.nodeParentTrail = payload.nodeParentTrail;
 
       state.nodeType = payload.nodeType;
       state.nodeDescription = payload.nodeDescription;
@@ -261,6 +286,19 @@ export default new Vuex.Store({
                 ];
             } else {
               state.nodeOBUsageTips = "";
+            }
+
+            if (
+              state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+              "x-ob-sample-value"
+              ]
+            ) {
+              state.nodeOBSampleValue =
+                state.selectedDefnRefFile[state.isSelected]["allOf"][i][
+                "x-ob-sample-value"
+                ];
+            } else {
+              state.nodeOBSampleValue = {};
             }
           }
         }
@@ -374,7 +412,7 @@ export default new Vuex.Store({
     },
     exportFile(state, payload) {
       let jsonFileToExport = new Blob(
-        [JSON.stringify(state.currentFile.fullFileForExport, null, 4)],
+        [JSON.stringify(payload.file, null, 2)],
         { type: "application/json" }
       );
       FileSaver.saveAs(jsonFileToExport, payload.filename + ".json");
@@ -416,7 +454,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -432,7 +472,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -448,7 +490,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -464,7 +508,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -486,8 +532,13 @@ export default new Vuex.Store({
     refreshCreateDefnInputs(state, refreshBool) {
       state.refreshCreateDefn = refreshBool;
     },
-    toggleExportModal(state) {
-      state.exportModalOpened = !state.exportModalOpened;
+    setFileToExport(state, payload) {
+      state.fileToExport = payload.fileToExport;
+      state.fileToExportName = payload.fileToExportName;
+      state.exportModalHeader = payload.exportModalHeader;
+    },
+    setShowExportModal(state, payload) {
+      state.exportModalOpened = payload;
     },
     clearEditorView(state) {
       state.showDetailedView = false;

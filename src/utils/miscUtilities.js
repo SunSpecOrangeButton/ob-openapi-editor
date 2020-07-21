@@ -559,3 +559,88 @@ export function wildcardSearch(searchSubject, searchTerm) {
 
   return searchSubject.indexOf(searchTerm) == 0;
 }
+
+export function getSampleJSON(fileName, state, name) {
+  let fileItems = state.loadedFiles[fileName]["file"];
+  let exportJSON = {};
+  if (name) {
+    exportJSON = sourceFileName(name, fileItems, state);
+  } else {
+    Object.keys(fileItems).sort().forEach(itemName => {
+      exportJSON[itemName] = buildSampleJSON(itemName, fileItems, state);
+    });
+  }
+  return exportJSON;
+}
+
+export function substringNameFromParentTrail(name) {
+  return name.substring(0, name.indexOf("-"));
+}
+
+export function sourceFileName(name, fileItems, state) {
+  let parent = name.substring(name.indexOf("-") + 1);
+  let children = [substringNameFromParentTrail(name)];
+  while(substringNameFromParentTrail(parent) !== "root") {
+    children.push(substringNameFromParentTrail(parent));
+    parent = parent.substring(parent.indexOf("-") + 1);
+  }
+  let exportJSON = {};
+  exportJSON[children[children.length - 1]] = buildSampleJSON(children[children.length - 1], fileItems, state, children.length !== 1, children, children.length - 1);
+  return exportJSON;
+}
+
+export function buildSampleJSON(name, fileItems, state, searchMode, children, index) {
+  let item = fileItems[name];
+  let result = {};
+  if (item["allOf"]) {
+    let ref = item["allOf"][0]["$ref"];
+    result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+  } else if (item["type"] === "array") {
+    let ref = item["items"]["$ref"];
+    result = [];
+    result.push(getItemJSON(ref, item, fileItems, state, searchMode, children, index, name));
+  } else if (item["type"] === "object") {
+    Object.keys(item["properties"]).sort().forEach(prop => {
+        if (searchMode && children[index - 1] !== prop) {
+          return;
+        }
+        let ref = item["properties"][prop]["$ref"];
+        result[prop] = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+      });
+  } else if (item["$ref"]) {
+    let ref = item["$ref"];
+    result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+  } else {
+    result = "";
+  }
+  return result;
+}
+
+export function getItemJSON(ref, item, fileItems, state, searchMode, children, index, name) {
+  let refFileName = ref.substring(0, ref.indexOf("#"));
+  let refItemName = ref.substring(ref.lastIndexOf("/") + 1);
+  if (refItemName.includes("Taxonomy")) {
+    if (searchMode && children[0] !== name) {
+      let result = {};
+      result[children[0]] = "";
+      return result;
+    }
+    return item["allOf"][1]["x-ob-sample-value"];
+  } else {
+    if(refFileName) {
+      fileItems = state.loadedFiles[refFileName]["file"];
+    }
+    if (searchMode) {
+      if (item["type"] !== "array") {
+        if (!item["$ref"]) {
+          index--;
+        }
+        refItemName = children[index];
+      }
+      if (index === 0) {
+        searchMode = false;
+      }
+    }
+    return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index, name);
+  }
+}
