@@ -475,7 +475,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-values": payload.OBSampleValue
             }
           ]
         };
@@ -491,7 +493,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-values": payload.OBSampleValue
             }
           ]
         };
@@ -507,7 +511,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-values": payload.OBSampleValue
             }
           ]
         };
@@ -523,7 +529,9 @@ export default new Vuex.Store({
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
               "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum
+              "x-ob-enum": payload.OBEnum,
+              "x-ob-usage-tips": payload.OBUsageTips,
+              "x-ob-sample-values": payload.OBSampleValue
             }
           ]
         };

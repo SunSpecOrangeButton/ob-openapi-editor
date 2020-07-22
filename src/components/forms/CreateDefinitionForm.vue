@@ -37,6 +37,30 @@
       </b-form-group>
 
       <b-form-group
+        id="node-usage-tips-input-group"
+        label="Usage tips:"
+        label-for="node-usage-tips-input"
+      >
+        <b-form-input
+          id="node-usage-tips-input"
+          v-model="selectedOBUsageTips"
+          :disabled="!preSubmit"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+        id="node-sample-value-input-group"
+        label="Sample value:"
+        label-for="node-sample-value-input"
+      >
+        <b-form-input
+          id="node-sample-value-input"
+          v-model="selectedOBSampleValue"
+          :disabled="!preSubmit"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
         id="node-item-type-input-group"
         label="OB Item Type:"
         label-for="node-item-type-input"
@@ -175,7 +199,9 @@ export default {
       OBItemTypes: [],
       selectedOBItemType: null,
       selectedOBUnits: null,
-      selectedOBEnum: null
+      selectedOBEnum: null,
+      selectedOBUsageTips: null,
+      selectedOBSampleValue: null
     };
   },
   methods: {
@@ -218,7 +244,9 @@ export default {
         arrayItemFileName: this.selectedFileName,
         OBItemType: this.selectedOBItemType,
         OBUnits: this.selectedOBUnits,
-        OBEnum: this.selectedOBEnum
+        OBEnum: this.selectedOBEnum,
+        OBUsageTips: this.selectedOBUsageTips,
+        OBSampleValue: this.selectedOBSampleValue
       };
       this.preSubmit = false;
 
@@ -407,11 +435,15 @@ export default {
       this.selectedFileName = null;
       this.selectedDefnIndex = null;
       this.selectedDefnName = null;
+      this.selectedOBUsageTips = null;
+      this.selectedOBSampleValue = null;
     },
     "$store.state.isSelected"() {
       this.definitionType = null;
       this.definitionName = null;
       this.definitionDescription = null;
+      this.selectedOBUsageTips = null;
+      this.selectedOBSampleValue = null;
       if (!this.preSubmit) {
         this.preSubmit = true;
       }
@@ -425,6 +457,8 @@ export default {
         this.selectedFileName = null;
         this.selectedDefnIndex = null;
         this.selectedDefnName = null;
+        this.selectedOBUsageTips = null;
+        this.selectedOBSampleValue = null;
         if (!this.preSubmit) {
           this.preSubmit = true;
         }
