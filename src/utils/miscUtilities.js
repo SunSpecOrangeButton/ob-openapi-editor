@@ -564,12 +564,7 @@ export function getSampleJSON(fileName, state, name) {
   let fileItems = state.loadedFiles[fileName]["file"];
   let exportJSON = {};
   if (name) {
-    if (name.substring(name.indexOf("-") + 1).indexOf("root") !== 0) {
-      exportJSON = sourceFileName(name, fileItems, state);
-    } else {
-      name = name.split("-")[0];
-      exportJSON[name] = buildSampleJSON(name, fileItems, state);
-    }
+    exportJSON = sourceFileName(name, fileItems, state);
   } else {
     Object.keys(fileItems).sort().forEach(itemName => {
       exportJSON[itemName] = buildSampleJSON(itemName, fileItems, state);
@@ -590,7 +585,7 @@ export function sourceFileName(name, fileItems, state) {
     parent = parent.substring(parent.indexOf("-") + 1);
   }
   let exportJSON = {};
-  exportJSON[children[children.length - 1]] = buildSampleJSON(children[children.length - 1], fileItems, state, true, children, children.length - 1);
+  exportJSON[children[children.length - 1]] = buildSampleJSON(children[children.length - 1], fileItems, state, children.length !== 1, children, children.length - 1);
   return exportJSON;
 }
 
