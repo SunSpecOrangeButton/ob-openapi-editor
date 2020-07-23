@@ -634,31 +634,34 @@ export function buildSampleJSON(name, fileItems, state, searchMode, children, in
   return result;
 }
 
-export function getItemJSON(ref, item, fileItems, state, searchMode, children, index, prop) {
+export function getItemJSON(ref, item, fileItems, state, searchMode, children, index, name) {
   let refFileName = ref.substring(0, ref.indexOf("#"));
   let refItemName = ref.substring(ref.lastIndexOf("/") + 1);
   if (refItemName.includes("Taxonomy")) {
     console.log('obj Tax');
-    if (searchMode && children[0] !== prop) {
-      return;
+    if (searchMode && children[0] !== name) {
+      let result = {};
+      result[children[0]] = "";
+      return result;
     }
     return buildSampleValueObj(item["allOf"][1]["x-ob-sample-value"]);
   } else {
     if(refFileName) {
       fileItems = state.loadedFiles[refFileName]["file"];
-      if (searchMode && item["items"]) {
-        index++;
-      }
     }
     if (searchMode) {
-      index--;
+      if (item["type"] !== "array") {
+        if (!item["$ref"]) {
+          index--;
+        }
+        refItemName = children[index];
+      }
       if (index === 0) {
         searchMode = false;
       }
-      refItemName = children[index];
       console.log("Children[index]=" + children[index] + " " + refFileName);
     }
-    return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index);
+    return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index, name);
   }
 }
 
