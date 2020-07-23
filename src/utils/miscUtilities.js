@@ -565,7 +565,6 @@ export function getSampleJSON(fileName, state, name) {
   let exportJSON = {};
   if (name) {
     if (name.substring(name.indexOf("-") + 1).indexOf("root") !== 0) {
-      console.log("in getSampleJSON: " + name);
       exportJSON = sourceFileName(name, fileItems, state);
     } else {
       name = name.split("-")[0];
@@ -587,36 +586,26 @@ export function sourceFileName(name, fileItems, state) {
   let parent = name.substring(name.indexOf("-") + 1);
   let children = [substringNameFromParentTrail(name)];
   while(substringNameFromParentTrail(parent) !== "root") {
-    console.log(substringNameFromParentTrail(parent));
     children.push(substringNameFromParentTrail(parent));
     parent = parent.substring(parent.indexOf("-") + 1);
   }
-  console.log(substringNameFromParentTrail(parent));
-  console.log(children);
-  console.log(substringNameFromParentTrail(name));
   let exportJSON = {};
   exportJSON[children[children.length - 1]] = buildSampleJSON(children[children.length - 1], fileItems, state, true, children, children.length - 1);
   return exportJSON;
 }
 
 export function buildSampleJSON(name, fileItems, state, searchMode, children, index) {
-  console.log("in buildSampleJSON: " + name + " " + searchMode + " " + index);
   let item = fileItems[name];
   let result = {};
   if (item["allOf"]) {
-    console.log('in allOf');
     let ref = item["allOf"][0]["$ref"];
     result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
   } else if (item["type"] === "array") {
-    console.log('in array');
     let ref = item["items"]["$ref"];
     result = [];
     result.push(getItemJSON(ref, item, fileItems, state, searchMode, children, index, name));
   } else if (item["type"] === "object") {
-    console.log('in obj');
     Object.keys(item["properties"]).sort().forEach(prop => {
-        console.log("in loop");
-        console.log(name + " " + prop);
         if (searchMode && children[index - 1] !== prop) {
           return;
         }
@@ -624,13 +613,11 @@ export function buildSampleJSON(name, fileItems, state, searchMode, children, in
         result[prop] = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
       });
   } else if (item["$ref"]) {
-    console.log('pure ref');
     let ref = item["$ref"];
     result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
   } else {
     result = "";
   }
-  console.log(result);
   return result;
 }
 
@@ -638,7 +625,6 @@ export function getItemJSON(ref, item, fileItems, state, searchMode, children, i
   let refFileName = ref.substring(0, ref.indexOf("#"));
   let refItemName = ref.substring(ref.lastIndexOf("/") + 1);
   if (refItemName.includes("Taxonomy")) {
-    console.log('obj Tax');
     if (searchMode && children[0] !== name) {
       let result = {};
       result[children[0]] = "";
@@ -659,7 +645,6 @@ export function getItemJSON(ref, item, fileItems, state, searchMode, children, i
       if (index === 0) {
         searchMode = false;
       }
-      console.log("Children[index]=" + children[index] + " " + refFileName);
     }
     return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index, name);
   }

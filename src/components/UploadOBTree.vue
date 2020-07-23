@@ -502,7 +502,6 @@ export default {
     toggleSelect() {
       this.$store.commit("toggleSelectDefinitionNode");
       this.$store.commit("showDetailedView");
-      console.log(this.parent_trail);
 
       this.$store.commit({
         type: "selectNode",
