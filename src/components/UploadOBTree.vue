@@ -79,6 +79,7 @@
           :nodeDescription="arr[1].description"
           :isObj="true"
           :parent="name"
+          :parent_trail="defnRefParentTrail(arr[0], parent_trail)"
           type="object"
           :ref="defnRef(arr[0], file.fileName)"
           :nameRef="defnRef(arr[0], file.fileName)"
@@ -100,6 +101,7 @@
           :nodeDescription="arr[1].description"
           :isObj="false"
           parent="root"
+          :parent_trail="defnRefParentTrail(arr[0], parent_trail)"
           type="array"
           :ref="defnRef(arr[0], file.fileName)"
           :nameRef="defnRef(arr[0], file.fileName)"
@@ -120,6 +122,7 @@
           :depth="depth + 1"
           :nodeDescription="getNodeDescription(arr[1])"
           :parent="name"
+          :parent_trail="defnRefParentTrail(arr[0], parent_trail)"
           type="object"
           :ref="defnRef(arr[0], file.fileName)"
           :nameRef="defnRef(arr[0], file.fileName)"
@@ -141,6 +144,7 @@
           :nodeDescription="getNodeDescription(arr[1])"
           :isObj="true"
           :parent="name"
+          :parent_trail="defnRefParentTrail(arr[0], parent_trail)"
           type="object"
           :ref="defnRef(arr[0], file.fileName)"
           :nameRef="defnRef(arr[0], file.fileName)"
@@ -167,6 +171,7 @@
           :depth="depth + 1"
           :nodeDescription="getNodeDescription(arr[1])"
           :parent="name"
+          :parent_trail="defnRefParentTrail(arr[0], parent_trail)"
           type="element"
           :ref="defnRef(arr[0], file.fileName)"
           :nameRef="defnRef(arr[0], file.fileName)"
@@ -196,6 +201,7 @@ export default {
     "nodeDescription",
     "isObj",
     "parent",
+    "parent_trail",
     "type",
     "nameRef",
     "subClassedNode",
@@ -267,6 +273,7 @@ export default {
       let immutable_lst_SC = [];
       let fromSuperClass = false;
       let defnRef = "";
+      let defnRefTrail = "";
       let isLocal = true;
       let refFileContext = "LOCAL";
       let isTaxonomyElement = false;
@@ -495,11 +502,13 @@ export default {
     toggleSelect() {
       this.$store.commit("toggleSelectDefinitionNode");
       this.$store.commit("showDetailedView");
+      console.log(this.parent_trail);
 
       this.$store.commit({
         type: "selectNode",
         nodeName: this.name,
         nodeParent: this.parent,
+        nodeParentTrail: this.parent_trail,
         nodeType: this.type,
         nameRef: this.nameRef,
         nodeDescription: this.nodeDescription,
@@ -611,6 +620,9 @@ export default {
         this.name
       );
       return defnRef;
+    },
+    defnRefParentTrail(nodeName, parent_trail) {
+      return nodeName + "-" + parent_trail;
     }
   },
   watch: {

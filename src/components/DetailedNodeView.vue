@@ -18,7 +18,7 @@
             v-b-modal.modal-edit-node
             :disabled="!$store.state.defnIsLocal"
           >Edit definition</b-button>
-
+          <b-button variant="primary" size="sm" @click="exportSampleJSON">Export Sample JSON</b-button>
           <b-button v-b-modal.modal-delete-node variant="danger" size="sm">
             <span v-if="$store.state.nodeParent == 'root'">Delete</span>
             <span v-else>Remove</span>
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import * as miscUtilities from "../utils/miscUtilities";
 export default {
   data() {
     return {
@@ -70,6 +72,16 @@ export default {
     };
   },
   methods: {
+    exportSampleJSON() {
+      let fileName = this.$store.state.currentFile.fileName; 
+      let name = this.$store.state.nodeParentTrail;
+      let exportJSON = miscUtilities.getSampleJSON(fileName, this.$store.state, name);
+      let jsonFileToExport = new Blob(
+        [JSON.stringify(exportJSON, null, 2)],
+        {type: "application/json"}
+      );
+      FileSaver.saveAs(jsonFileToExport, "sample-" + this.$store.state.nodeName + ".json");
+    },
     deleteNode(nodeName) {
       if (this.$store.state.isSubClassedNode) {
         this.showError = true;

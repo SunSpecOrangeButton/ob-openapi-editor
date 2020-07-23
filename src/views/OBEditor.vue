@@ -50,6 +50,7 @@
                     :nodeDescription="arr[1].description"
                     :isObj="true"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -68,6 +69,7 @@
                     :nodeDescription="arr[1].description"
                     :isObj="false"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="array"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -89,6 +91,7 @@
                     :expandAllObjects="expandAllObjects"
                     :nodeDescription="getNodeDescription(arr[1])"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -109,6 +112,7 @@
                     :nodeDescription="getNodeDescription(arr[1])"
                     :isObj="true"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -126,6 +130,7 @@
                     :expandAllObjects="expandAllObjects"
                     :nodeDescription="getNodeDescription(arr[1])"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="string"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -354,6 +359,13 @@
         :disabled="!$store.state.currentFile"
         >Load In Definition</b-button
       >
+      <b-button
+        variant="primary"
+        size="sm"
+        @click="exportSampleJSON"
+        :disabled="!$store.state.currentFile"
+        >Export Sample JSON</b-button
+      >
     </div>
     <div class="element-editor-header">
       <div class="editor-header">
@@ -427,6 +439,7 @@ import * as miscUtilities from "../utils/miscUtilities";
 import * as JSONEditor from "../utils/JSONEditor.js";
 import SolarTaxonomyMaster from "@/assets/master_files/Master-Solar-Taxonomy-040120.json";
 import OBOpenAPIMaster from "@/assets/master_files/Master-OB-OpenAPI-030420.json";
+import FileSaver from "file-saver";
 
 export default {
   components: {
@@ -500,6 +513,16 @@ export default {
         this.$store.state.loadedFiles,
         this.$store.state.currentFile
       );
+    },
+    exportSampleJSON() {
+      let fileName = this.$store.state.currentFile.fileName;
+      console.log(this.$store.state.nodeParentTrail);
+      let exportJSON = miscUtilities.getSampleJSON(fileName, this.$store.state, name);
+      let jsonFileToExport = new Blob(
+        [JSON.stringify(exportJSON, null, 2)],
+        {type: "application/json"}
+      );
+      FileSaver.saveAs(jsonFileToExport, "sample-" + fileName);
     },
     fileToJSON() {
       if (this.file) {
@@ -690,6 +713,9 @@ export default {
       let defnRef =
         "root" + "-" + miscUtilities.generateUniqueRef(nodeName, fileName);
       return defnRef;
+    },
+    defnRefParentTrailStart(nodeName, fileName) {
+      return miscUtilities.generateUniqueRef(nodeName, fileName, "root");
     }
   },
   watch: {

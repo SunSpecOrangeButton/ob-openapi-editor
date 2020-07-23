@@ -559,3 +559,135 @@ export function wildcardSearch(searchSubject, searchTerm) {
 
   return searchSubject.indexOf(searchTerm) == 0;
 }
+
+export function getSampleJSON(fileName, state, name) {
+  let fileItems = state.loadedFiles[fileName]["file"];
+  let exportJSON = {};
+  if (name) {
+    if (name.substring(name.indexOf("-") + 1).indexOf("root") !== 0) {
+      console.log("in getSampleJSON: " + name);
+      exportJSON = sourceFileName(name, fileItems, state);
+    } else {
+      name = name.split("-")[0];
+      exportJSON[name] = buildSampleJSON(name, fileItems, state);
+    }
+  } else {
+    Object.keys(fileItems).sort().forEach(itemName => {
+      exportJSON[itemName] = buildSampleJSON(itemName, fileItems, state);
+    });
+  }
+  return exportJSON;
+}
+
+export function substringNameFromParentTrail(name) {
+  return name.substring(0, name.indexOf("-"));
+}
+
+export function sourceFileName(name, fileItems, state) {
+  let parent = name.substring(name.indexOf("-") + 1);
+  let children = [substringNameFromParentTrail(name)];
+  while(substringNameFromParentTrail(parent) !== "root") {
+    console.log(substringNameFromParentTrail(parent));
+    children.push(substringNameFromParentTrail(parent));
+    parent = parent.substring(parent.indexOf("-") + 1);
+  }
+  console.log(substringNameFromParentTrail(parent));
+  console.log(children);
+  console.log(substringNameFromParentTrail(name));
+  let exportJSON = {};
+  exportJSON[children[children.length - 1]] = buildSampleJSON(children[children.length - 1], fileItems, state, true, children, children.length - 1);
+  return exportJSON;
+}
+
+export function buildSampleJSON(name, fileItems, state, searchMode, children, index) {
+  console.log("in buildSampleJSON: " + name + " " + searchMode + " " + index);
+  let item = fileItems[name];
+  let result = {};
+  if (item["allOf"]) {
+    console.log('in allOf');
+    let ref = item["allOf"][0]["$ref"];
+    result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+  } else if (item["type"] === "array") {
+    console.log('in array');
+    let ref = item["items"]["$ref"];
+    result = [];
+    result.push(getItemJSON(ref, item, fileItems, state, searchMode, children, index, name));
+  } else if (item["type"] === "object") {
+    console.log('in obj');
+    Object.keys(item["properties"]).sort().forEach(prop => {
+        console.log("in loop");
+        console.log(name + " " + prop);
+        if (searchMode && children[index - 1] !== prop) {
+          return;
+        }
+        let ref = item["properties"][prop]["$ref"];
+        result[prop] = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+      });
+  } else if (item["$ref"]) {
+    console.log('pure ref');
+    let ref = item["$ref"];
+    result = getItemJSON(ref, item, fileItems, state, searchMode, children, index, name);
+  } else {
+    result = "";
+  }
+  console.log(result);
+  return result;
+}
+
+export function getItemJSON(ref, item, fileItems, state, searchMode, children, index, prop) {
+  let refFileName = ref.substring(0, ref.indexOf("#"));
+  let refItemName = ref.substring(ref.lastIndexOf("/") + 1);
+  if (refItemName.includes("Taxonomy")) {
+    console.log('obj Tax');
+    if (searchMode && children[0] !== prop) {
+      return;
+    }
+    return buildSampleValueObj(item["allOf"][1]["x-ob-sample-value"]);
+  } else {
+    if(refFileName) {
+      fileItems = state.loadedFiles[refFileName]["file"];
+      if (searchMode && item["items"]) {
+        index++;
+      }
+    }
+    if (searchMode) {
+      index--;
+      if (index === 0) {
+        searchMode = false;
+      }
+      refItemName = children[index];
+      console.log("Children[index]=" + children[index] + " " + refFileName);
+    }
+    return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index);
+  }
+}
+
+export function buildSampleValueObj(sampleValue) {
+  if (!sampleValue) {
+    return {
+      "Decimals": "",
+      "EndTime": "",
+      "Precision": "",
+      "StartTime": "",
+      "Unit": "",
+      "Value": ""
+    };
+  } 
+  let samples = sampleValue.split(";");
+  let samplePairs = [];
+  samples.forEach(sample => {
+    let pair = sample.split(":");
+    samplePairs.push([pair[0], pair[1]]);
+  });
+  let primatives = {};
+  samplePairs.forEach(pair => {
+    let value = pair[1];
+    if (/^[\d]*.[\d]+$/.test(pair[1])) {
+      value = parseFloat(value);
+    } else if (/^[\d]+$/.test(pair[1])) {
+      value = parseInt(value);
+    }
+    primatives[pair[0]] = value;
+  });
+  return primatives;
+}

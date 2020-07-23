@@ -16,6 +16,7 @@ export default new Vuex.Store({
     nodeName: null,
     nodeType: null,
     nodeParent: null,
+    nodeParentTrail: null,
     nodeDescription: null,
     nodeEnum: null,
     nameRef: null,
@@ -206,6 +207,7 @@ export default new Vuex.Store({
       state.isSelected = payload.nodeName;
       state.nodeName = payload.nodeName;
       state.nodeParent = payload.nodeParent;
+      state.nodeParentTrail = payload.nodeParentTrail;
 
       state.nodeType = payload.nodeType;
       state.nodeDescription = payload.nodeDescription;
