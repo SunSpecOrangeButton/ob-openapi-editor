@@ -56,7 +56,7 @@ Is the parent of all the editing components
         @click="editItemType"
       >Edit Item Type</b-button>
       <b-button class="edit-btn" variant="secondary" @click="editUsageTips">Edit Usage Tips</b-button>
-      <b-button class="edit-btn" variant="secondary" @click="editSampleValue">Edit Sample Value</b-button>
+      <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement" @click="editSampleValue">Edit Sample Value</b-button>
     </span>
     <div
       class="previous-view-button"

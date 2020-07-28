@@ -236,8 +236,7 @@ export default {
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
           { Attributes: "Superclasses", Values: temp_superClassListStr },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips },
-          { Attributes: "Sample Value", Values: defnOBSampleValue },
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else if (this.$store.state.isTaxonomyElement) {
         temp_ret_obj = [
@@ -265,16 +264,14 @@ export default {
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Array Item", Values: arrayItemName },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips },
-          { Attributes: "Sample Value", Values: defnOBSampleValue }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
           { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips },
-          { Attributes: "Sampe Value", Values: defnOBSampleValue }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       }
 
