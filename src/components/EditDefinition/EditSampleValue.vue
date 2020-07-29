@@ -8,9 +8,10 @@ Component for adding/removing sample value to definitions
       <p>Sample Value:</p>
       <b-form-textarea
         id="textarea"
-        v-model="sampeValue"
+        v-model="sampleValue"
         rows="3"
         max-rows="6"
+        :state="Boolean(sampleValue) ? validateSampleValueJSON() : false"
         :disabled="hasSubmitted"
       ></b-form-textarea>
     </div>
@@ -27,18 +28,29 @@ Component for adding/removing sample value to definitions
 <script>
 export default {
   created() {
-    this.sampeValue = this.$store.state.nodeOBSampleValue;
+    this.sampleValue = JSON.stringify(this.$store.state.nodeOBSampleValue, null , 2);
   },
   data() {
     return {
       selectedIndex: null,
-      sampeValue: "",
+      sampleValue: "",
       hasSubmitted: false
     };
   },
   methods: {
+    validateSampleValueJSON() {
+      try {
+        JSON.parse(this.sampleValue);
+        return true;
+      } catch(error) {
+        return false;
+      }
+    },
     submitEdit() {
-      this.$store.commit("addSampleValue", this.sampeValue);
+      if (!this.validateSampleValueJSON()) {
+        return;
+      }
+      this.$store.commit("addSampleValue", JSON.parse(this.sampleValue));
       this.hasSubmitted = true;
     },
     goPreviousView() {

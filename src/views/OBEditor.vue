@@ -359,13 +359,6 @@
         :disabled="!$store.state.currentFile"
         >Load In Definition</b-button
       >
-      <b-button
-        variant="primary"
-        size="sm"
-        @click="exportSampleJSON"
-        :disabled="!$store.state.currentFile"
-        >Export Sample JSON</b-button
-      >
     </div>
     <div class="element-editor-header">
       <div class="editor-header">
@@ -382,9 +375,16 @@
         <b-button
           variant="primary"
           v-b-modal.export-modal
-          @click="exportModalOpened"
+          @click="exportModalOpened('sampleJSON')"
           :disabled="!$store.state.currentFile"
-          >Export</b-button
+          >Create Sample</b-button
+        >
+        <b-button
+          variant="primary"
+          v-b-modal.export-modal
+          @click="exportModalOpened('taxonomy')"
+          :disabled="!$store.state.currentFile"
+          >Save As</b-button
         >
       </div>
     </div>
@@ -514,16 +514,6 @@ export default {
         this.$store.state.currentFile
       );
     },
-    exportSampleJSON() {
-      let fileName = this.$store.state.currentFile.fileName;
-      console.log(this.$store.state.nodeParentTrail);
-      let exportJSON = miscUtilities.getSampleJSON(fileName, this.$store.state, name);
-      let jsonFileToExport = new Blob(
-        [JSON.stringify(exportJSON, null, 2)],
-        {type: "application/json"}
-      );
-      FileSaver.saveAs(jsonFileToExport, "sample-" + fileName);
-    },
     fileToJSON() {
       if (this.file) {
         let reader = new FileReader();
@@ -602,8 +592,21 @@ export default {
     objectRef(nodeName, fileName) {
       return fileName + "-" + nodeName + "-root";
     },
-    exportModalOpened() {
-      this.$store.commit("toggleExportModal");
+    setExportFile(fileToExportType) {
+      let fileToExport = null;
+      if (fileToExportType === "taxonomy") {
+        fileToExport = this.$store.state.currentFile.fullFileForExport;
+      } else if (fileToExportType === "sampleJSON") {
+        fileToExport = miscUtilities.getSampleJSON(this.$store.state.currentFile.fileName, this.$store.state);
+      }
+      this.$store.commit("setFileToExport", {
+        fileToExport: fileToExport,
+        fileToExportName: this.$store.state.currentFile.fileName
+      });
+    },
+    exportModalOpened(fileToExportType) {
+      this.setExportFile(fileToExportType);
+      this.$store.commit("setShowExportModal", true);
     },
     // returns object containing all children of the superClass and subClass with no duplicates, while labeling objects/elements that are inherited for signifying
     subClassChildren(file, superClassRef, subClassObj, key) {

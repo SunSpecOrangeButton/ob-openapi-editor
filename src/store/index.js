@@ -32,7 +32,7 @@ export default new Vuex.Store({
     refreshCreateDefn: false,
     isSubClassedNode: false,
 
-    // tracks whether exportModal has been opened, needed so a watcher can reset the export form.
+    // controls if the ExportFormModal is showing or not
     exportModalOpened: false,
     xbrlFlat: [],
 
@@ -57,6 +57,9 @@ export default new Vuex.Store({
     selectedFileName: "",
     selectedDefnRefFile: null,
 
+    fileToExport: null,
+    fileToExportName: "",
+
     defnIsLocal: null,
 
     activeEditingView: "EditDefinitionFormDisabled",
@@ -67,7 +70,7 @@ export default new Vuex.Store({
     nodeOBUnit: "",
     nodeOBEnum: "",
     nodeOBUsageTips: "",
-    nodeOBSampleValue: "",
+    nodeOBSampleValue: {},
   },
   mutations: {
     /*
@@ -294,7 +297,7 @@ export default new Vuex.Store({
                 "x-ob-sample-value"
                 ];
             } else {
-              state.nodeOBSampleValue = "";
+              state.nodeOBSampleValue = {};
             }
           }
         }
@@ -311,19 +314,6 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
-
-        if (
-          state.selectedDefnRefFile[state.isSelected][
-          "x-ob-sample-value"
-          ]
-        ) {
-          state.nodeOBSampleValue =
-            state.selectedDefnRefFile[state.isSelected][
-            "x-ob-sample-value"
-            ];
-        } else {
-          state.nodeOBSampleValue = "";
-        }
       } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "array") {
         if (
           state.selectedDefnRefFile[state.isSelected][
@@ -337,26 +327,12 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
-
-        if (
-          state.selectedDefnRefFile[state.isSelected][
-          "x-ob-sample-value"
-          ]
-        ) {
-          state.nodeOBSampleValue =
-            state.selectedDefnRefFile[state.isSelected][
-            "x-ob-sample-value"
-            ];
-        } else {
-          state.nodeOBSampleValue = "";
-        }
       } else {
         state.nodeEnum = null;
         state.nodeOBEnum = "";
         state.nodeOBType = "";
         state.nodeOBUnit = "";
         state.nodeOBUsageTips = "";
-        state.nodeOBSampleValue = "";
       }
     },
 
@@ -435,7 +411,7 @@ export default new Vuex.Store({
     },
     exportFile(state, payload) {
       let jsonFileToExport = new Blob(
-        [JSON.stringify(state.currentFile.fullFileForExport, null, 4)],
+        [JSON.stringify(payload.file, null, 2)],
         { type: "application/json" }
       );
       FileSaver.saveAs(jsonFileToExport, payload.filename + ".json");
@@ -479,7 +455,7 @@ export default new Vuex.Store({
               "x-ob-unit": payload.OBUnits,
               "x-ob-enum": payload.OBEnum,
               "x-ob-usage-tips": payload.OBUsageTips,
-              "x-ob-sample-values": payload.OBSampleValue
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -497,7 +473,7 @@ export default new Vuex.Store({
               "x-ob-unit": payload.OBUnits,
               "x-ob-enum": payload.OBEnum,
               "x-ob-usage-tips": payload.OBUsageTips,
-              "x-ob-sample-values": payload.OBSampleValue
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -515,7 +491,7 @@ export default new Vuex.Store({
               "x-ob-unit": payload.OBUnits,
               "x-ob-enum": payload.OBEnum,
               "x-ob-usage-tips": payload.OBUsageTips,
-              "x-ob-sample-values": payload.OBSampleValue
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -533,7 +509,7 @@ export default new Vuex.Store({
               "x-ob-unit": payload.OBUnits,
               "x-ob-enum": payload.OBEnum,
               "x-ob-usage-tips": payload.OBUsageTips,
-              "x-ob-sample-values": payload.OBSampleValue
+              "x-ob-sample-value": payload.OBSampleValue
             }
           ]
         };
@@ -555,8 +531,12 @@ export default new Vuex.Store({
     refreshCreateDefnInputs(state, refreshBool) {
       state.refreshCreateDefn = refreshBool;
     },
-    toggleExportModal(state) {
-      state.exportModalOpened = !state.exportModalOpened;
+    setFileToExport(state, payload) {
+      state.fileToExport = payload.fileToExport;
+      state.fileToExportName = payload.fileToExportName;
+    },
+    setShowExportModal(state, payload) {
+      state.exportModalOpened = payload;
     },
     clearEditorView(state) {
       state.showDetailedView = false;

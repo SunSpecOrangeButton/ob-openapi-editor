@@ -625,7 +625,7 @@ export function getItemJSON(ref, item, fileItems, state, searchMode, children, i
       result[children[0]] = "";
       return result;
     }
-    return buildSampleValueObj(item["allOf"][1]["x-ob-sample-value"]);
+    return item["allOf"][1]["x-ob-sample-value"];
   } else {
     if(refFileName) {
       fileItems = state.loadedFiles[refFileName]["file"];
@@ -643,34 +643,4 @@ export function getItemJSON(ref, item, fileItems, state, searchMode, children, i
     }
     return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index, name);
   }
-}
-
-export function buildSampleValueObj(sampleValue) {
-  if (!sampleValue) {
-    return {
-      "Decimals": "",
-      "EndTime": "",
-      "Precision": "",
-      "StartTime": "",
-      "Unit": "",
-      "Value": ""
-    };
-  } 
-  let samples = sampleValue.split(";");
-  let samplePairs = [];
-  samples.forEach(sample => {
-    let pair = sample.split(":");
-    samplePairs.push([pair[0], pair[1]]);
-  });
-  let primatives = {};
-  samplePairs.forEach(pair => {
-    let value = pair[1];
-    if (/^[\d]*.[\d]+$/.test(pair[1])) {
-      value = parseFloat(value);
-    } else if (/^[\d]+$/.test(pair[1])) {
-      value = parseInt(value);
-    }
-    primatives[pair[0]] = value;
-  });
-  return primatives;
 }
