@@ -50,6 +50,7 @@
                     :nodeDescription="arr[1].description"
                     :isObj="true"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -68,6 +69,7 @@
                     :nodeDescription="arr[1].description"
                     :isObj="false"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="array"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -89,6 +91,7 @@
                     :expandAllObjects="expandAllObjects"
                     :nodeDescription="getNodeDescription(arr[1])"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -109,6 +112,7 @@
                     :nodeDescription="getNodeDescription(arr[1])"
                     :isObj="true"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="object"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -126,6 +130,7 @@
                     :expandAllObjects="expandAllObjects"
                     :nodeDescription="getNodeDescription(arr[1])"
                     parent="root"
+                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
                     type="string"
                     :ref="defnRef(arr[0], item.fileName)"
                     :nameRef="defnRef(arr[0], item.fileName)"
@@ -370,9 +375,16 @@
         <b-button
           variant="primary"
           v-b-modal.export-modal
-          @click="exportModalOpened"
+          @click="exportModalOpened('sampleJSON')"
           :disabled="!$store.state.currentFile"
-          >Export</b-button
+          >Create Sample JSON</b-button
+        >
+        <b-button
+          variant="primary"
+          v-b-modal.export-modal
+          @click="exportModalOpened('taxonomy')"
+          :disabled="!$store.state.currentFile"
+          >Save As</b-button
         >
       </div>
     </div>
@@ -427,6 +439,7 @@ import * as miscUtilities from "../utils/miscUtilities";
 import * as JSONEditor from "../utils/JSONEditor.js";
 import SolarTaxonomyMaster from "@/assets/master_files/Master-Solar-Taxonomy-040120.json";
 import OBOpenAPIMaster from "@/assets/master_files/Master-OB-OpenAPI-030420.json";
+import FileSaver from "file-saver";
 
 export default {
   components: {
@@ -579,8 +592,25 @@ export default {
     objectRef(nodeName, fileName) {
       return fileName + "-" + nodeName + "-root";
     },
-    exportModalOpened() {
-      this.$store.commit("toggleExportModal");
+    setExportFile(fileToExportType) {
+      let fileToExport = null;
+      let exportModalHeader = "";
+      if (fileToExportType === "taxonomy") {
+        fileToExport = this.$store.state.currentFile.fullFileForExport;
+        exportModalHeader = "Save as...";
+      } else if (fileToExportType === "sampleJSON") {
+        fileToExport = miscUtilities.getSampleJSON(this.$store.state.currentFile.fileName, this.$store.state);
+        exportModalHeader = "Create Sample JSON";
+      }
+      this.$store.commit("setFileToExport", {
+        fileToExport: fileToExport,
+        fileToExportName: this.$store.state.currentFile.fileName,
+        exportModalHeader: exportModalHeader
+      });
+    },
+    exportModalOpened(fileToExportType) {
+      this.setExportFile(fileToExportType);
+      this.$store.commit("setShowExportModal", true);
     },
     // returns object containing all children of the superClass and subClass with no duplicates, while labeling objects/elements that are inherited for signifying
     subClassChildren(file, superClassRef, subClassObj, key) {
@@ -690,6 +720,9 @@ export default {
       let defnRef =
         "root" + "-" + miscUtilities.generateUniqueRef(nodeName, fileName);
       return defnRef;
+    },
+    defnRefParentTrailStart(nodeName, fileName) {
+      return miscUtilities.generateUniqueRef(nodeName, fileName, "root");
     }
   },
   watch: {

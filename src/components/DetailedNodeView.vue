@@ -18,7 +18,7 @@
             v-b-modal.modal-edit-node
             :disabled="!$store.state.defnIsLocal"
           >Edit definition</b-button>
-
+          <b-button variant="primary" size="sm" @click="exportSampleJSON">Create Sample JSON</b-button>
           <b-button v-b-modal.modal-delete-node variant="danger" size="sm">
             <span v-if="$store.state.nodeParent == 'root'">Delete</span>
             <span v-else>Remove</span>
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import * as miscUtilities from "../utils/miscUtilities";
 export default {
   data() {
     return {
@@ -70,6 +72,17 @@ export default {
     };
   },
   methods: {
+    exportSampleJSON() {
+      let fileName = this.$store.state.currentFile.fileName; 
+      let parentTrail = this.$store.state.nodeParentTrail;
+      let name = parentTrail.substring(0, parentTrail.indexOf("-"));
+      this.$store.commit("setFileToExport", {
+        fileToExport: miscUtilities.getSampleJSON(fileName, this.$store.state, parentTrail),
+        fileToExportName: name + " from " + fileName,
+        exportModalHeader: "Create Sample JSON of " + name
+      });
+      this.$store.commit("setShowExportModal", true);
+    },
     deleteNode(nodeName) {
       if (this.$store.state.isSubClassedNode) {
         this.showError = true;
@@ -160,6 +173,7 @@ export default {
       let defnOBUnit = this.$store.state.nodeOBUnit;
       let defnOBEnum = this.$store.state.nodeOBEnum;
       let defnOBUsageTips = this.$store.state.nodeOBUsageTips;
+      let defnOBSampleValue = this.$store.state.nodeOBSampleValue;
 
       this.refreshFields = !this.refreshFields;
 
@@ -181,6 +195,10 @@ export default {
 
       if (!defnOBUsageTips) {
         defnOBUsageTips = "None";
+      }
+
+      if (!defnOBSampleValue) {
+        defnOBSampleValue = "None";
       }
 
       if (!temp_enum) {
@@ -231,7 +249,8 @@ export default {
           { Attributes: "OB Unit", Values: defnOBUnit },
           { Attributes: "OB Enumeration", Values: defnOBEnum },
           { Attributes: "Superclasses", Values: temp_superClassListStr },
-          { Attributes: "Usage Tips", Values: defnOBUsageTips }
+          { Attributes: "Usage Tips", Values: defnOBUsageTips },
+          { Attributes: "Sample Value", Values: defnOBSampleValue }
         ];
       } else if (defnDoc[this.$store.state.isSelected]["type"] == "array") {
         arrayItemName = defnDoc[this.$store.state.isSelected]["items"][

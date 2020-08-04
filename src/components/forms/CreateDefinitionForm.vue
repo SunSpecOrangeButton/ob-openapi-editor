@@ -11,6 +11,7 @@
           v-model="definitionType"
           :options="OBDataTypes"
           :disabled="!preSubmit"
+          :state="Boolean(definitionType)"
         ></b-form-select>
       </b-form-group>
       <b-form-group
@@ -22,6 +23,7 @@
           id="node-name-input"
           v-model="definitionName"
           :disabled="!preSubmit"
+          :state="Boolean(definitionName)"
         ></b-form-input>
       </b-form-group>
       <b-form-group
@@ -33,7 +35,33 @@
           id="node-description-input"
           v-model="definitionDescription"
           :disabled="!preSubmit"
+          :state="Boolean(definitionDescription)"
         ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+        id="node-usage-tips-input-group"
+        label="Usage tips:"
+        label-for="node-usage-tips-input"
+      >
+        <b-form-input
+          id="node-usage-tips-input"
+          v-model="selectedOBUsageTips"
+          :disabled="!preSubmit"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+        id="node-sample-value-input-group"
+        label="Sample value:"
+        label-for="node-sample-value-input"
+      >
+        <b-form-textarea
+          id="node-sample-value-input"
+          v-model="selectedOBSampleValue"
+          :state="Boolean(selectedOBSampleValue) ? validateSampleValueJSON(selectedOBSampleValue) : false"
+          :disabled="!preSubmit"
+        ></b-form-textarea>
       </b-form-group>
 
       <b-form-group
@@ -52,6 +80,7 @@
           v-model="selectedOBItemType"
           :options="OBItemTypes"
           :disabled="!preSubmit"
+          :state="Boolean(selectedOBItemType)"
         ></b-form-select>
       </b-form-group>
 
@@ -175,10 +204,20 @@ export default {
       OBItemTypes: [],
       selectedOBItemType: null,
       selectedOBUnits: null,
-      selectedOBEnum: null
+      selectedOBEnum: null,
+      selectedOBUsageTips: "",
+      selectedOBSampleValue: null
     };
   },
   methods: {
+    validateSampleValueJSON() {
+      try {
+        JSON.parse(this.selectedOBSampleValue);
+        return true;
+      } catch(error) {
+        return false;
+      }
+    },
     showDetailedView() {
       this.definitionName = null;
       this.definitionType = null;
@@ -208,6 +247,10 @@ export default {
         this.submissionErrorMsg = "Please select an OB Item Type."
         this.submissionError = true;
         return;
+      } else if(!this.selectedOBSampleValue || !this.validateSampleValueJSON()) {
+        this.submissionErrorMsg = "Invalid SampleValue JSON."
+        this.submissionError = true;
+        return;
       }
       
       let payload = {
@@ -218,7 +261,9 @@ export default {
         arrayItemFileName: this.selectedFileName,
         OBItemType: this.selectedOBItemType,
         OBUnits: this.selectedOBUnits,
-        OBEnum: this.selectedOBEnum
+        OBEnum: this.selectedOBEnum,
+        OBUsageTips: this.selectedOBUsageTips,
+        OBSampleValue: JSON.parse(this.selectedOBSampleValue)
       };
       this.preSubmit = false;
 
@@ -407,11 +452,15 @@ export default {
       this.selectedFileName = null;
       this.selectedDefnIndex = null;
       this.selectedDefnName = null;
+      this.selectedOBUsageTips = "";
+      this.selectedOBSampleValue = JSON.stringify({"Decimals":"","EndTime":"","Precision":"","StartTime":"","Unit":"","Value":""}, null, 2);
     },
     "$store.state.isSelected"() {
       this.definitionType = null;
       this.definitionName = null;
       this.definitionDescription = null;
+      this.selectedOBUsageTips = "";
+      this.selectedOBSampleValue = JSON.stringify({"Decimals":"","EndTime":"","Precision":"","StartTime":"","Unit":"","Value":""}, null, 2);
       if (!this.preSubmit) {
         this.preSubmit = true;
       }
@@ -425,6 +474,8 @@ export default {
         this.selectedFileName = null;
         this.selectedDefnIndex = null;
         this.selectedDefnName = null;
+        this.selectedOBUsageTips = "";
+        this.selectedOBSampleValue = JSON.stringify({"Decimals":"","EndTime":"","Precision":"","StartTime":"","Unit":"","Value":""}, null, 2);
         if (!this.preSubmit) {
           this.preSubmit = true;
         }
