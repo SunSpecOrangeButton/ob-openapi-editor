@@ -377,6 +377,7 @@
           v-b-modal.export-modal
           @click="exportModalOpened('sampleJSON')"
           :disabled="!$store.state.currentFile"
+          size="sm"
           >Create Sample JSON</b-button
         >
         <b-button
@@ -384,6 +385,7 @@
           v-b-modal.export-modal
           @click="exportModalOpened('taxonomy')"
           :disabled="!$store.state.currentFile"
+          size="sm"
           >Save As</b-button
         >
       </div>
@@ -1025,10 +1027,9 @@ export default {
   border-top: #d3d3d3 solid 1px;
   border-right: #d3d3d3 solid 1px;
   border-left: #d3d3d3 solid 1px;
-
   padding-left: 15px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: .3fr .7fr;
 }
 
 .editor-header {
