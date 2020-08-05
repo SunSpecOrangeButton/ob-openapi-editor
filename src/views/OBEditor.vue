@@ -377,7 +377,7 @@
           v-b-modal.export-modal
           @click="exportModalOpened('sampleJSON')"
           :disabled="!$store.state.currentFile"
-          >Create Sample</b-button
+          >Create Sample JSON</b-button
         >
         <b-button
           variant="primary"
@@ -594,14 +594,18 @@ export default {
     },
     setExportFile(fileToExportType) {
       let fileToExport = null;
+      let exportModalHeader = "";
       if (fileToExportType === "taxonomy") {
         fileToExport = this.$store.state.currentFile.fullFileForExport;
+        exportModalHeader = "Save as...";
       } else if (fileToExportType === "sampleJSON") {
         fileToExport = miscUtilities.getSampleJSON(this.$store.state.currentFile.fileName, this.$store.state);
+        exportModalHeader = "Create Sample JSON";
       }
       this.$store.commit("setFileToExport", {
         fileToExport: fileToExport,
-        fileToExportName: this.$store.state.currentFile.fileName
+        fileToExportName: this.$store.state.currentFile.fileName,
+        exportModalHeader: exportModalHeader
       });
     },
     exportModalOpened(fileToExportType) {

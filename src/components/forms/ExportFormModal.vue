@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="export-modal" title="Save as..." v-model="$store.state.exportModalOpened" @show="resetModal">
+  <b-modal id="export-modal" :title=$store.state.exportModalHeader v-model="$store.state.exportModalOpened" @show="resetModal">
     <template v-slot:modal-footer>
       <b-button
         size="sm"

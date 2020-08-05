@@ -74,10 +74,12 @@ export default {
   methods: {
     exportSampleJSON() {
       let fileName = this.$store.state.currentFile.fileName; 
-      let name = this.$store.state.nodeParentTrail;
+      let parentTrail = this.$store.state.nodeParentTrail;
+      let name = parentTrail.substring(0, parentTrail.indexOf("-"));
       this.$store.commit("setFileToExport", {
-        fileToExport: miscUtilities.getSampleJSON(fileName, this.$store.state, name),
-        fileToExportName: name.substring(0, name.indexOf("-")) + " from " + fileName
+        fileToExport: miscUtilities.getSampleJSON(fileName, this.$store.state, parentTrail),
+        fileToExportName: name + " from " + fileName,
+        exportModalHeader: "Create Sample JSON of " + name
       });
       this.$store.commit("setShowExportModal", true);
     },

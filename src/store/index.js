@@ -59,6 +59,7 @@ export default new Vuex.Store({
 
     fileToExport: null,
     fileToExportName: "",
+    exportModalHeader: "",
 
     defnIsLocal: null,
 
@@ -534,6 +535,7 @@ export default new Vuex.Store({
     setFileToExport(state, payload) {
       state.fileToExport = payload.fileToExport;
       state.fileToExportName = payload.fileToExportName;
+      state.exportModalHeader = payload.exportModalHeader;
     },
     setShowExportModal(state, payload) {
       state.exportModalOpened = payload;
