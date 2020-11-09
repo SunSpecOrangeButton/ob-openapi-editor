@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import * as JSONEditor from "../utils/JSONEditor.js";
+import * as miscUtilities from "../utils/miscUtilities";
 import FileSaver from "file-saver";
 
 Vue.use(Vuex);
@@ -72,6 +73,13 @@ export default new Vuex.Store({
     nodeOBEnum: "",
     nodeOBUsageTips: "",
     nodeOBSampleValue: {},
+
+    // viewer mode option, can either be 'View Mode' or 'Edit Mode'
+    viewerMode: 'View Mode',
+    viewObjs: [],
+
+    // refresh key is needed to re-render element list when switching between edit and view modes
+    refreshKey: null
   },
   mutations: {
     /*
@@ -594,6 +602,31 @@ export default new Vuex.Store({
           );
         }
       }
-    }
+    },
+    changeViewerMode(state, mode) {
+      state.viewerMode = mode
+    },
+    // params:
+    // el: name of element to add or remove
+    // mode: 'init' or 'create_cookie'; init is for reading cookies when the app inits
+    addViewObj(state, params) {
+      state.viewObjs.push(params['el'])
+      if (params['mode'] == 'create_cookie') 
+        miscUtilities.createCookie('viewObjs', JSON.stringify(state.viewObjs), 500)
+    },
+    removeViewObj(state, params) {
+      for (let i = 0; i < state.viewObjs.length; i++) {
+        if (params['el'] == state.viewObjs[i]) {
+          state.viewObjs.splice(i, 1)
+          break;
+        }
+      }
+      miscUtilities.createCookie('viewObjs', JSON.stringify(state.viewObjs), 500)
+    },
+
+    // rerenders node list
+    reRenderList(state) {
+      state.refreshKey = Math.floor((Math.random() * 100) + 1).toString()
+    },
   }
 });

@@ -65,6 +65,26 @@
             {{ shortenName }}
           </span>
         </span>
+        <span class="primary-view-icon" v-if="(isObj || isArray) && $store.state.viewerMode == 'Edit Mode' && isTopLevel && isSelected">
+            <span @click=addViewObj(name)>
+              <v-icon
+                name="plus"
+                style="cursor: pointer"
+                v-if="!viewObjFinal"
+              />
+            </span>
+            <v-icon
+              name="regular/eye"
+              style="cursor: pointer"
+              v-if="viewObjFinal"
+            />             
+        </span>
+        <span class="primary-view-icon" v-if="$store.state.viewerMode == 'View Mode' && viewObjFinal && isTopLevel && isSelected" @click=removeViewObj(name)>
+            <v-icon
+              name="times"
+              style="cursor: pointer; color:red"
+            />        
+        </span>
       </div>
     </div>
 
@@ -88,6 +108,8 @@
           :subClassedNode="arr[2]"
           :referenceFile="arr[4]"
           :isLocal="arr[5]"
+          :viewObj="false"
+          :isTopLevel="false"
         ></UploadOBTree>
 
         <!-- array -->
@@ -111,6 +133,8 @@
           :arrayItemType="getArrItemType(arr[5])"
           :referenceFile="arr[3]"
           :isLocal="arr[4]"
+          :viewObj="false"
+          :isTopLevel="false"
         ></UploadOBTree>
 
         <!-- taxonomy element -->
@@ -132,6 +156,8 @@
           :referenceFile="arr[5]"
           :isLocal="arr[6]"
           :isArrayItem="isArray"
+          :viewObj="false"
+          :isTopLevel="false"
         >
         </UploadOBTree>
 
@@ -154,6 +180,8 @@
           :referenceFile="arr[5]"
           :isLocal="arr[6]"
           :isArrayItem="isArray"
+          :viewObj="false"
+          :isTopLevel="false"
         ></UploadOBTree>
 
         <!-- for primitives -->
@@ -181,6 +209,8 @@
           :referenceFile="arr[3]"
           :isLocal="arr[4]"
           :isArrayItem="isArray"
+          :viewObj="false"
+          :isTopLevel="false"
         >
         </UploadOBTree>
       </span>
@@ -212,7 +242,9 @@ export default {
     "isLocal",
     "isArray",
     "arrayItemRef",
-    "arrayItemType"
+    "arrayItemType",
+    "viewObj",
+    "isTopLevel"
   ],
   name: "UploadOBTree",
   data() {
@@ -223,13 +255,20 @@ export default {
       isObject: Boolean(this.children),
       parents: this.parent,
       sortedObjLen: null,
-      expandDefn: true
+      expandDefn: true,
+      viewObjFinal: false
+      
     };
   },
   created() {
     if (this.isTaxonomyElement || this.isArray) {
       this.expandDefn = false;
     }
+    // needed because we cannot mutate prop viewObj
+    if (this.viewObj) {
+      this.viewObjFinal = true
+    }
+
   },
   computed: {
     arrayItemNameFromRef() {
@@ -622,6 +661,21 @@ export default {
     },
     defnRefParentTrail(nodeName, parent_trail) {
       return nodeName + "-" + parent_trail;
+    },
+    addViewObj(el) {
+      this.viewObjFinal = true
+      this.$store.commit("addViewObj", {
+        'el': el,
+        'mode': 'create_cookie'
+      });
+    },
+    removeViewObj(el) {
+      this.viewObjFinal = false
+      this.$store.commit("removeViewObj", {
+        'el': el,
+        'mode': 'create_cookie'
+      });
+      this.$store.commit("reRenderList")
     }
   },
   watch: {
@@ -689,4 +743,14 @@ export default {
   font-style: italic;
   font-weight: bold;
 }
+
+.primary-view-icon {
+  display:block;
+  padding-right: 125px;
+  float: right;
+}
+
+/* .node-wrapper:hover .primary-view-icon { 
+  display: block;
+} */
 </style>

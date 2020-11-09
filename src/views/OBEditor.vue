@@ -31,7 +31,7 @@
                 </span>
               </template>
               <span v-if="$store.state.currentFile">
-                <div class="tree-search">
+                <div class="tree-search" v-if="$store.state.viewerMode == 'Edit Mode'">
                   <b-form-input
                     class="tree-search-bar"
                     v-model="treeSearchTerm"
@@ -39,107 +39,119 @@
                   >
                   </b-form-input>
                 </div>
-                <span v-for="arr in sortedObjects">
-                  <!-- obj node -->
-                  <UploadOBTree
-                    v-if="arr[2] == 'Object'"
-                    :name="arr[0]"
-                    :children="arr[1].properties"
-                    :depth="0"
-                    :expandAllObjects="expandAllObjects"
-                    :nodeDescription="arr[1].description"
-                    :isObj="true"
-                    parent="root"
-                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
-                    type="object"
-                    :ref="defnRef(arr[0], item.fileName)"
-                    :nameRef="defnRef(arr[0], item.fileName)"
-                    :file="computedFile"
-                    :isTaxonomyElement="false"
-                    :referenceFile="arr[3]"
-                    :isLocal="arr[4]"
-                  ></UploadOBTree>
+                <span :key="$store.state.refreshKey">
+                  <span v-for="arr in sortedObjects">
+                    <!-- obj node -->
+                    <UploadOBTree
+                      v-if="arr[2] == 'Object'"
+                      :name="arr[0]"
+                      :children="arr[1].properties"
+                      :depth="0"
+                      :expandAllObjects="expandAllObjects"
+                      :nodeDescription="arr[1].description"
+                      :isObj="true"
+                      parent="root"
+                      :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
+                      type="object"
+                      :ref="defnRef(arr[0], item.fileName)"
+                      :nameRef="defnRef(arr[0], item.fileName)"
+                      :file="computedFile"
+                      :isTaxonomyElement="false"
+                      :referenceFile="arr[3]"
+                      :isLocal="arr[4]"
+                      :viewObj="arr[5]"
+                      :isTopLevel="true"
+                    ></UploadOBTree>
 
-                  <UploadOBTree
-                    v-else-if="arr[2] == 'Array'"
-                    :name="arr[0]"
-                    :children="getArrayItemAsChildren(arr[3], arr[5], arr[0])"
-                    :depth="0"
-                    :expandAllObjects="expandAllObjects"
-                    :nodeDescription="arr[1].description"
-                    :isObj="false"
-                    parent="root"
-                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
-                    type="array"
-                    :ref="defnRef(arr[0], item.fileName)"
-                    :nameRef="defnRef(arr[0], item.fileName)"
-                    :file="computedFile"
-                    :isArray="true"
-                    :arrayItemRef="arr[5]"
-                    :arrayItemType="getArrItemType(arr[5])"
-                    :referenceFile="arr[3]"
-                    :isLocal="arr[4]"
-                  ></UploadOBTree>
+                    <UploadOBTree
+                      v-else-if="arr[2] == 'Array'"
+                      :name="arr[0]"
+                      :children="getArrayItemAsChildren(arr[3], arr[5], arr[0])"
+                      :depth="0"
+                      :expandAllObjects="expandAllObjects"
+                      :nodeDescription="arr[1].description"
+                      :isObj="false"
+                      parent="root"
+                      :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
+                      type="array"
+                      :ref="defnRef(arr[0], item.fileName)"
+                      :nameRef="defnRef(arr[0], item.fileName)"
+                      :file="computedFile"
+                      :isArray="true"
+                      :arrayItemRef="arr[5]"
+                      :arrayItemType="getArrItemType(arr[5])"
+                      :referenceFile="arr[3]"
+                      :isLocal="arr[4]"
+                      :viewObj="false"
+                      :isTopLevel="true"
+                    ></UploadOBTree>
 
-                  <!-- taxonomy element -->
-                  <UploadOBTree
-                    v-else-if="arr[2] == 'TaxonomyElement'"
-                    :isObj="false"
-                    :name="arr[0]"
-                    :children="subClassChildren(arr[4], arr[3], arr[1], arr[0])"
-                    :depth="0"
-                    :expandAllObjects="expandAllObjects"
-                    :nodeDescription="getNodeDescription(arr[1])"
-                    parent="root"
-                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
-                    type="object"
-                    :ref="defnRef(arr[0], item.fileName)"
-                    :nameRef="defnRef(arr[0], item.fileName)"
-                    :file="computedFile"
-                    :isTaxonomyElement="true"
-                    :referenceFile="arr[4]"
-                    :isLocal="arr[5]"
-                  >
-                  </UploadOBTree>
+                    <!-- taxonomy element -->
+                    <UploadOBTree
+                      v-else-if="arr[2] == 'TaxonomyElement'"
+                      :isObj="false"
+                      :name="arr[0]"
+                      :children="subClassChildren(arr[4], arr[3], arr[1], arr[0])"
+                      :depth="0"
+                      :expandAllObjects="expandAllObjects"
+                      :nodeDescription="getNodeDescription(arr[1])"
+                      parent="root"
+                      :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
+                      type="object"
+                      :ref="defnRef(arr[0], item.fileName)"
+                      :nameRef="defnRef(arr[0], item.fileName)"
+                      :file="computedFile"
+                      :isTaxonomyElement="true"
+                      :referenceFile="arr[4]"
+                      :isLocal="arr[5]"
+                      :viewObj="false"
+                      :isTopLevel="true"
+                    >
+                    </UploadOBTree>
 
-                  <!-- allOf Obj -->
-                  <UploadOBTree
-                    v-else-if="arr[2] == 'ObjWithInherit'"
-                    :name="arr[0]"
-                    :children="subClassChildren(arr[4], arr[3], arr[1], arr[0])"
-                    :depth="0"
-                    :expandAllObjects="expandAllObjects"
-                    :nodeDescription="getNodeDescription(arr[1])"
-                    :isObj="true"
-                    parent="root"
-                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
-                    type="object"
-                    :ref="defnRef(arr[0], item.fileName)"
-                    :nameRef="defnRef(arr[0], item.fileName)"
-                    :file="computedFile"
-                    :isTaxonomyElement="false"
-                    :referenceFile="arr[4]"
-                    :isLocal="arr[5]"
-                  ></UploadOBTree>
+                    <!-- allOf Obj -->
+                    <UploadOBTree
+                      v-else-if="arr[2] == 'ObjWithInherit'"
+                      :name="arr[0]"
+                      :children="subClassChildren(arr[4], arr[3], arr[1], arr[0])"
+                      :depth="0"
+                      :expandAllObjects="expandAllObjects"
+                      :nodeDescription="getNodeDescription(arr[1])"
+                      :isObj="true"
+                      parent="root"
+                      :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
+                      type="object"
+                      :ref="defnRef(arr[0], item.fileName)"
+                      :nameRef="defnRef(arr[0], item.fileName)"
+                      :file="computedFile"
+                      :isTaxonomyElement="false"
+                      :referenceFile="arr[4]"
+                      :isLocal="arr[5]"
+                      :viewObj="false"
+                      :isTopLevel="true"
+                    ></UploadOBTree>
 
-                  <UploadOBTree
-                    v-else
-                    :isObj="false"
-                    :name="arr[0]"
-                    :depth="0"
-                    :expandAllObjects="expandAllObjects"
-                    :nodeDescription="getNodeDescription(arr[1])"
-                    parent="root"
-                    :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
-                    type="string"
-                    :ref="defnRef(arr[0], item.fileName)"
-                    :nameRef="defnRef(arr[0], item.fileName)"
-                    :file="computedFile"
-                    :isTaxonomyElement="false"
-                    :referenceFile="arr[2]"
-                    :isLocal="arr[3]"
-                  >
-                  </UploadOBTree>
+                    <UploadOBTree
+                      v-else
+                      :isObj="false"
+                      :name="arr[0]"
+                      :depth="0"
+                      :expandAllObjects="expandAllObjects"
+                      :nodeDescription="getNodeDescription(arr[1])"
+                      parent="root"
+                      :parent_trail="defnRefParentTrailStart(arr[0], item.fileName)"
+                      type="string"
+                      :ref="defnRef(arr[0], item.fileName)"
+                      :nameRef="defnRef(arr[0], item.fileName)"
+                      :file="computedFile"
+                      :isTaxonomyElement="false"
+                      :referenceFile="arr[2]"
+                      :isLocal="arr[3]"
+                      :viewObj="false"
+                      :isTopLevel="true"
+                    >
+                    </UploadOBTree>
+                  </span>
                 </span>
                 <div class="load-more-btn-container">
                   <b-button @click="loadMore" v-if="showLoadMore"
@@ -337,11 +349,12 @@
         size="sm"
         @click="toggleExpandAll"
         :disabled="!$store.state.currentFile"
+        v-if="$store.state.viewerMode == 'Edit Mode'"
       >
         <span v-if="expandAllObjects">
           Collapse All
         </span>
-        <span v-else>
+        <span v-else-if="!expandAllObjects">
           Expand All
         </span>
       </b-button>
@@ -350,6 +363,7 @@
         size="sm"
         @click="showCreateDefinitionForm"
         :disabled="!$store.state.currentFile"
+        v-if="$store.state.viewerMode == 'Edit Mode'"
         >Create New Definition</b-button
       >
       <b-button
@@ -357,6 +371,7 @@
         size="sm"
         @click="showLoadInDefinitionForm"
         :disabled="!$store.state.currentFile"
+        v-if="$store.state.viewerMode == 'Edit Mode'"
         >Load In Definition</b-button
       >
     </div>
@@ -378,6 +393,7 @@
           @click="exportModalOpened('sampleJSON')"
           :disabled="!$store.state.currentFile"
           size="sm"
+          v-if="$store.state.viewerMode == 'Edit Mode'"
           >Create Sample JSON</b-button
         >
         <b-button
@@ -386,6 +402,7 @@
           @click="exportModalOpened('taxonomy')"
           :disabled="!$store.state.currentFile"
           size="sm"
+          v-if="$store.state.viewerMode == 'Edit Mode'"
           >Save As</b-button
         >
       </div>
@@ -453,6 +470,13 @@ export default {
     LoadInDefinition
   },
   created() {
+    let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
+    for (let i in viewObjsArr) {
+      this.$store.commit("addViewObj", {
+        el: viewObjsArr[i],
+        mode: 'init'
+      });
+    }
     this.$store.state.loadedFiles["Master-Solar-Taxonomy-040120.json"] = {
       fullFileForExport: SolarTaxonomyMaster,
       file: SolarTaxonomyMaster.components.schemas,
@@ -464,6 +488,9 @@ export default {
       file: OBOpenAPIMaster.components.schemas,
       fileName: "Master-OB-OpenAPI-030420.json"
     };
+
+    this.file = this.$store.state.loadedFiles["Master-OB-OpenAPI-030420.json"];
+    this.loadDependencyFile()
   },
   data() {
     return {
@@ -725,9 +752,20 @@ export default {
     },
     defnRefParentTrailStart(nodeName, fileName) {
       return miscUtilities.generateUniqueRef(nodeName, fileName, "root");
+    },
+    isViewObj(el) {
+      if (this.$store.state.viewObjs.includes(el)) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   watch: {
+    treeSearchTerm() {
+        this.$store.commit('reRenderList')
+        this.$store.commit('clearEditorView')
+    },
     tabIndexFileUpload() {
       this.selectedIndex = null;
       this.selectedDependencyFileName = null;
@@ -877,6 +915,7 @@ export default {
           isLocal = true;
           superClass_lst = [];
           fileReference = this.$store.state.currentFile.file;
+          let isViewObj = this.isViewObj(key)
 
           defnRef = miscUtilities.getDefnRef(
             fileReference,
@@ -901,7 +940,8 @@ export default {
               fileReference[key],
               nodeType,
               fileReference,
-              isLocal
+              isLocal,
+              isViewObj
             ]);
           } else if (fileReference[key]["allOf"]) {
             for (let i in fileReference[key]["allOf"]) {
@@ -973,12 +1013,16 @@ export default {
           .concat(el_lst)
           .concat(immutable_lst);
 
-        returnArr = returnArr.filter(node => {
-            return miscUtilities.wildcardSearch(node[0].toLowerCase(), this.treeSearchTerm.toLowerCase());
-        });
-
+        if (this.$store.state.viewerMode == 'Edit Mode') {
+          returnArr = returnArr.filter(node => {
+              return miscUtilities.wildcardSearch(node[0].toLowerCase(), this.treeSearchTerm.toLowerCase());
+          });
+        } else if (this.$store.state.viewerMode == 'View Mode') {
+          returnArr = returnArr.filter(node => {
+              return miscUtilities.viewObjFilter(node[0], this.$store.state.viewObjs);
+          });
+        }
         this.filteredCount = returnArr.length;
-
         return returnArr.slice(0, this.numOfElem);
       }
     },

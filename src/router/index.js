@@ -5,12 +5,17 @@ import OBEditor from "../views/OBEditor.vue";
 Vue.use(VueRouter);
 
 const routes = [
+  // {
+  //   path: "/",
+  //   redirect: "/ob-editor"
+  // },
+  // {
+  //   path: "/ob-editor",
+  //   name: "ob-editor",
+  //   component: OBEditor
+  // }
   {
     path: "/",
-    redirect: "/ob-editor"
-  },
-  {
-    path: "/ob-editor",
     name: "ob-editor",
     component: OBEditor
   }
