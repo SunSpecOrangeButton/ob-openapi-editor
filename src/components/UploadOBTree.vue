@@ -683,7 +683,6 @@ export default {
   },
   watch: {
     expandAllObjects() {
-      console.log('expand all objects: ' + this.expandAllObjects)
       if (this.expandAllObjects == true) {
         this.expandDefn = true;
       } else {
