@@ -470,13 +470,26 @@ export default {
     LoadInDefinition
   },
   created() {
-    let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
-    for (let i in viewObjsArr) {
-      this.$store.commit("addViewObj", {
-        el: viewObjsArr[i],
-        mode: 'init'
-      });
+    if (Object.keys(this.$route.query).length !== 0) {
+      miscUtilities.eraseCookie('viewObjs')
+      let view_objects = this.$route.query['views']
+      view_objects = view_objects.split(',')
+      for (let i in view_objects) {
+        this.$store.commit("addViewObj", {
+          el: view_objects[i],
+          mode: 'create_cookie'
+        })
+      }
+    } else {
+      let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
+      for (let i in viewObjsArr) {
+        this.$store.commit("addViewObj", {
+          el: viewObjsArr[i],
+          mode: 'init'
+        });
+      }
     }
+
     this.$store.state.loadedFiles["Master-Solar-Taxonomy-040120.json"] = {
       fullFileForExport: SolarTaxonomyMaster,
       file: SolarTaxonomyMaster.components.schemas,
@@ -855,14 +868,6 @@ export default {
       this.selectedIndex = null;
       this.selectedDependencyInfo = null;
       this.selectedDependencyFileName = null;
-    },
-
-    file() {
-      if (this.file) {
-        // console.log(this.file.name)
-      } else {
-        // console.log(this.file)
-      }
     },
     selectedIndex() {
       this.readOnly = false;
