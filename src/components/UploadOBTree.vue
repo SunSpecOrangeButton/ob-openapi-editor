@@ -244,7 +244,8 @@ export default {
     "arrayItemRef",
     "arrayItemType",
     "viewObj",
-    "isTopLevel"
+    "isTopLevel",
+    "topLevelExpand"
   ],
   name: "UploadOBTree",
   data() {
@@ -255,12 +256,14 @@ export default {
       isObject: Boolean(this.children),
       parents: this.parent,
       sortedObjLen: null,
-      expandDefn: true,
+      expandDefn: false,
       viewObjFinal: false
-      
     };
   },
   created() {
+    if (this.topLevelExpand) {
+      this.expandDefn = true;
+    }
     if (this.isTaxonomyElement || this.isArray) {
       this.expandDefn = false;
     }
@@ -680,6 +683,7 @@ export default {
   },
   watch: {
     expandAllObjects() {
+      console.log('expand all objects: ' + this.expandAllObjects)
       if (this.expandAllObjects == true) {
         this.expandDefn = true;
       } else {

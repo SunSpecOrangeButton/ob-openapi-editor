@@ -61,6 +61,7 @@
                       :isLocal="arr[4]"
                       :viewObj="arr[5]"
                       :isTopLevel="true"
+                      :topLevelExpand="true"
                     ></UploadOBTree>
 
                     <UploadOBTree
@@ -481,13 +482,13 @@ export default {
         })
       }
     } else {
-      let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
-      for (let i in viewObjsArr) {
-        this.$store.commit("addViewObj", {
-          el: viewObjsArr[i],
-          mode: 'init'
-        });
-      }
+    let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
+    for (let i in viewObjsArr) {
+      this.$store.commit("addViewObj", {
+        el: viewObjsArr[i],
+        mode: 'init'
+      });
+    }
     }
 
     this.$store.state.loadedFiles["Master-Solar-Taxonomy-040120.json"] = {
@@ -868,6 +869,14 @@ export default {
       this.selectedIndex = null;
       this.selectedDependencyInfo = null;
       this.selectedDependencyFileName = null;
+    },
+
+    file() {
+      if (this.file) {
+        // console.log(this.file.name)
+      } else {
+        // console.log(this.file)
+      }
     },
     selectedIndex() {
       this.readOnly = false;
