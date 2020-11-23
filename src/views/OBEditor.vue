@@ -471,6 +471,8 @@ export default {
     LoadInDefinition
   },
   created() {
+    // if query params, create cookie
+    // query param form = ?views=
     if (Object.keys(this.$route.query).length !== 0) {
       miscUtilities.eraseCookie('viewObjs')
       let view_objects = this.$route.query['views']
@@ -482,13 +484,23 @@ export default {
         })
       }
     } else {
-    let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
-    for (let i in viewObjsArr) {
-      this.$store.commit("addViewObj", {
-        el: viewObjsArr[i],
-        mode: 'init'
-      });
-    }
+      let viewObjsArr = JSON.parse(miscUtilities.readCookie('viewObjs'))
+      if (viewObjsArr == null) {
+        viewObjsArr = []
+      }
+      // if you have cookie, read it, if not switch to edit mode
+      if (viewObjsArr.length != 0) {
+        for (let i in viewObjsArr) {
+          this.$store.commit("addViewObj", {
+            el: viewObjsArr[i],
+            mode: 'init'
+          });
+        }
+      } else {
+        this.$store.commit('clearEditorView')
+        this.$store.commit('changeViewerMode', 'Edit Mode')
+      }
+
     }
 
     this.$store.state.loadedFiles["Master-Solar-Taxonomy-040120.json"] = {
