@@ -85,7 +85,6 @@ export function deleteNode(JSONFile, nodeName, parentName) {
 
 //Edit node
 export function editNode(JSONFile, nodeName, newDescription) {
-  // console.log('in editNode json editor')
   let nodeEdit = {
     description: newDescription
   };
@@ -283,7 +282,6 @@ export function addEnum(JSONFile, defnName, enumName) {
 
 // remove enumeration from definition element
 export function removeEnum(JSONFile, defnName, enumName) {
-  // console.log("remove enum: " + enumName)
   for (let i in JSONFile[defnName]["allOf"]) {
     if (JSONFile[defnName]["allOf"][i]["enum"]) {
       let enum_index = JSONFile[defnName]["allOf"][i]["enum"].indexOf(enumName);

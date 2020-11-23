@@ -644,3 +644,44 @@ export function getItemJSON(ref, item, fileItems, state, searchMode, children, i
     return buildSampleJSON(refItemName, fileItems, state, searchMode, children, index, name);
   }
 }
+
+// filters list for View Objects
+// params:
+// el: element name
+// arr: vuex ViewObjs arr
+export function viewObjFilter(el, arr) {
+  if (arr.includes(el)) {
+    return el
+  } else {
+    return null
+  }
+}
+
+
+// functions for managing cookies
+
+// create also used for updates
+export function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+export function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+export function eraseCookie(name) {
+	createCookie(name,"",-1);
+}

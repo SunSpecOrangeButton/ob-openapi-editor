@@ -5,21 +5,21 @@
       <div class="detailed-view-buttons">
         <span v-if="$store.state.inOASTab">
           <b-button
-            v-if="$store.state.nodeParent == 'root'"
+            v-if="$store.state.nodeParent == 'root' && $store.state.viewerMode == 'Edit Mode'"
             variant="primary"
             size="sm"
             @click="showEditNodeView"
             :disabled="!$store.state.defnIsLocal"
           >Edit definition</b-button>
           <b-button
-            v-else
+            v-else-if="$store.state.nodeParent != 'root' && $store.state.viewerMode == 'Edit Mode'"
             variant="primary"
             size="sm"
             v-b-modal.modal-edit-node
             :disabled="!$store.state.defnIsLocal"
           >Edit definition</b-button>
-          <b-button variant="primary" size="sm" @click="exportSampleJSON">Create Sample JSON</b-button>
-          <b-button v-b-modal.modal-delete-node variant="danger" size="sm">
+          <b-button variant="primary" size="sm" @click="exportSampleJSON" v-if="$store.state.nodeParent == 'root' && $store.state.viewerMode == 'Edit Mode'">Create Sample JSON</b-button>
+          <b-button v-b-modal.modal-delete-node variant="danger" size="sm" v-if="$store.state.viewerMode == 'Edit Mode'">
             <span v-if="$store.state.nodeParent == 'root'">Delete</span>
             <span v-else>Remove</span>
           </b-button>
