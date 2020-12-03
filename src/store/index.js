@@ -455,7 +455,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy-040120.json#/components/schemas/TaxonomyElementString"
+                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementString"
             },
             {
               type: "object",
@@ -473,7 +473,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy-040120.json#/components/schemas/TaxonomyElementNumber"
+                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementNumber"
             },
             {
               type: "object",
@@ -491,7 +491,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy-040120.json#/components/schemas/TaxonomyElementInteger"
+                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementInteger"
             },
             {
               type: "object",
@@ -509,7 +509,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy-040120.json#/components/schemas/TaxonomyElementBoolean"
+                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementBoolean"
             },
             {
               type: "object",
@@ -564,8 +564,8 @@ export default new Vuex.Store({
     removeFile(state, fileName) {
       if (
         !(
-          fileName == "Master-Solar-Taxonomy-040120.json" ||
-          fileName == "Master-OB-OpenAPI-030420.json"
+          fileName == "Master-Solar-Taxonomy.json" ||
+          fileName == "Master-OB-OpenAPI.json"
         )
       ) {
         delete state.loadedFiles[fileName];

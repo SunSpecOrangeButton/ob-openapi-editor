@@ -41,11 +41,11 @@
         <h5>Dependencies Loaded:</h5>
         <p>
           <u>Master Solar Taxonomy:</u> <br />
-          <i>Master-Solar-Taxonomy-040120.json</i>
+          <i>Master-Solar-Taxonomy.json</i>
         </p>
         <p>
           <u>Master Orange Button OpenAPI Definition File:</u> <br />
-          <i>Master-OB-OpenAPI-030420.json</i>
+          <i>Master-OB-OpenAPI.json</i>
         </p>
       </template>
     </b-modal>
