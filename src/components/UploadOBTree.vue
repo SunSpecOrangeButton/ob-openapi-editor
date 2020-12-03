@@ -264,7 +264,7 @@ export default {
     if (this.topLevelExpand) {
       this.expandDefn = true;
     }
-    if (this.isTaxonomyElement || this.isArray) {
+    if (this.isTaxonomyElement || (this.isArray && !this.topLevelExpand)) {
       this.expandDefn = false;
     }
     // needed because we cannot mutate prop viewObj
@@ -517,7 +517,7 @@ export default {
           .concat(arr_lst)
           .concat(immutable_lst);
         this.sortedObjLen = retArr.length;
-
+        
         return retArr;
       }
     }

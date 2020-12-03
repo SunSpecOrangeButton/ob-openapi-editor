@@ -85,6 +85,7 @@
                       :isLocal="arr[4]"
                       :viewObj="false"
                       :isTopLevel="true"
+                      :topLevelExpand="true"
                     ></UploadOBTree>
 
                     <!-- taxonomy element -->
@@ -457,8 +458,8 @@ import LoadInDefinition from "../components/EditDefinition/LoadInDefinition";
 import EditDefinition from "../components/EditDefinition/EditDefinition";
 import * as miscUtilities from "../utils/miscUtilities";
 import * as JSONEditor from "../utils/JSONEditor.js";
-import SolarTaxonomyMaster from "@/assets/master_files/Master-Solar-Taxonomy-040120.json";
-import OBOpenAPIMaster from "@/assets/master_files/Master-OB-OpenAPI-030420.json";
+import SolarTaxonomyMaster from "@/assets/master_files/Master-Solar-Taxonomy.json";
+import OBOpenAPIMaster from "@/assets/master_files/Master-OB-OpenAPI.json";
 import FileSaver from "file-saver";
 
 export default {
@@ -503,19 +504,19 @@ export default {
 
     }
 
-    this.$store.state.loadedFiles["Master-Solar-Taxonomy-040120.json"] = {
+    this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"] = {
       fullFileForExport: SolarTaxonomyMaster,
       file: SolarTaxonomyMaster.components.schemas,
-      fileName: "Master-Solar-Taxonomy-040120.json"
+      fileName: "Master-Solar-Taxonomy.json"
     };
 
-    this.$store.state.loadedFiles["Master-OB-OpenAPI-030420.json"] = {
+    this.$store.state.loadedFiles["Master-OB-OpenAPI.json"] = {
       fullFileForExport: OBOpenAPIMaster,
       file: OBOpenAPIMaster.components.schemas,
-      fileName: "Master-OB-OpenAPI-030420.json"
+      fileName: "Master-OB-OpenAPI.json"
     };
 
-    this.file = this.$store.state.loadedFiles["Master-OB-OpenAPI-030420.json"];
+    this.file = this.$store.state.loadedFiles["Master-OB-OpenAPI.json"];
     this.loadDependencyFile()
   },
   data() {
@@ -538,15 +539,15 @@ export default {
       selectedDependencyFileName: null,
       selectedDependencyInfo: null,
       dbList: {
-        "Master-Solar-Taxonomy-040120.json": {
+        "Master-Solar-Taxonomy.json": {
           information:
             "This is the latest release of the Orange Button Solar Taxonomy",
-          fileName: "Master-Solar-Taxonomy-040120.json"
+          fileName: "Master-Solar-Taxonomy.json"
         },
-        "Master-OB-OpenAPI-030420.json": {
+        "Master-OB-OpenAPI.json": {
           information:
             "This is the latest release of the Orange Button OpenAPI Master Document",
-          fileName: "Master-OB-OpenAPI-030420.json"
+          fileName: "Master-OB-OpenAPI.json"
         }
       },
       fileAlreadyOpened: false,
@@ -1038,7 +1039,7 @@ export default {
           .concat(arr_lst)
           .concat(el_lst)
           .concat(immutable_lst);
-
+        
         if (this.$store.state.viewerMode == 'Edit Mode') {
           returnArr = returnArr.filter(node => {
               return miscUtilities.wildcardSearch(node[0].toLowerCase(), this.treeSearchTerm.toLowerCase());
