@@ -13,7 +13,7 @@ Child of EditDefinition, edit definition form
           <b-form-select
             id="change-item-type-group-base-item-type-input"
             v-model="selectedOBItemType"
-            :options="allItemTypes"
+            :options="allItemTypesComputed"
             disabled
           ></b-form-select>
         </b-form-group>
@@ -29,30 +29,34 @@ Child of EditDefinition, edit definition form
           ></b-form-select>
         </b-form-group>
 
-        <b-table 
+        <!-- <b-table 
             :fields="returnEnumOrUnitFields" 
             :items="itemTypeEnumsOrUnitsComputed" 
             id="change-item-type-enums-or-units-table" 
             class="item-type-table"
             ref="change-item-type-enums-or-units-table-ref"
         >
-        </b-table>
-        <!-- <span v-if="selectedOBItemType">
-          <span v-if="selectedOBItemType.includes('solar-types')">
-            <b-table
-              :items="itemTypeUnits"
-              class="detailsTable"
-              ref="itemTypeUnitsTable"
-            ></b-table>
-          </span>
-          <span v-else>
-            <b-table
-              :items="itemTypeUnits"
-              class="detailsTable"
-              ref="itemTypeUnitsTable"
-            ></b-table>
-          </span>
-        </span> -->
+        </b-table> -->
+        <b-table
+            :fields="returnItemTypeEnumsOrUnitsFields" 
+            :items="itemTypeEnumsOrUnitsComputed" 
+            selectable
+            selectable-mode="multi"
+            @row-selected="onRowSelected"
+            class="item-type-table"
+            ref="change-item-type-group-select-enums-or-units-table"
+        >
+            <template #cell(selected)="{ rowSelected }">
+                <template v-if="rowSelected">
+                    <span aria-hidden="true">&check;</span>
+                    <span class="sr-only">Selected</span>
+                </template>
+                <template v-else>
+                    <span aria-hidden="true">&nbsp;</span>
+                    <span class="sr-only">Not selected</span>
+                </template>      
+            </template>
+        </b-table>        
       </b-form>
     </div>
     <div class="editor-function-footer-container">
@@ -84,23 +88,29 @@ export default {
   },
   data() {
     return {
-    allItemTypes: {},
-    allItemTypeGroups: {},
-		selectedOBItemType: null,
-		selectedOBItemTypeType: null,
-		itemTypeEnumsOrUnits: [],
-    hasSubmitted: false,
-    currentItemTypeGroup: '',
-		unit_fields: [
-			{ key: "enumOrUnitID", label: "Unit ID" }, 
-			{ key: "enumOrUnitLabel", label: "Unit Label" }
-		],
-		enum_fields: [
-			{ key: "enumOrUnitID", label: "Enum ID" }, 
-			{ key: "enumOrUnitLabel", label: "Enum Label" }                
-    ],
-    possibleItemTypeGroups: []      
-  };
+      allItemTypes: {},
+      currentGroupEnumsOrUnits: [],
+      tableSelectedEnumsOrUnits: [],
+      allItemTypeGroups: {},
+      selectedOBItemType: null,
+      selectedOBItemTypeType: null,
+      itemTypeEnumsOrUnits: [],
+      hasSubmitted: false,
+      currentItemTypeGroup: '',
+      unitFields: [
+          { key: 'selected', label: 'Selected'},
+          { key: "enumOrUnitID", label: "Unit ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Unit Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Unit Description"}
+      ],
+      enumFields: [
+          { key: 'selected', label: 'Selected'},
+          { key: "enumOrUnitID", label: "Enum ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Enum Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Enum Description"}
+      ],
+      possibleItemTypeGroups: []      
+    }
   },
   methods: {
     submitEdit() {
@@ -112,7 +122,7 @@ export default {
     },
     goPreviousView() {
       this.$store.state.activeEditingView = "EditDefinitionFormDisabled";
-    },
+    },    
     findPossibleItemTypeGroups() {
       for (let i in this.allItemTypeGroups) {
         if (this.allItemTypeGroups[i]['type'].includes(this.selectedOBItemType)) {
@@ -120,24 +130,58 @@ export default {
         }
       }
       this.possibleItemTypeGroups.push({value: '', text: 'None'})
-    }
+    },
+        selectCurrentGroupEnumsOrUnits(enumsOrUnitsArr) {
+            let index = null
+            let enumsOrUnitsToSelectArr = []
+            for (let i in enumsOrUnitsArr) {
+                index = 0
+                for (let j in this.itemTypeEnumsOrUnits) {
+                    if (enumsOrUnitsArr[i] == this.itemTypeEnumsOrUnits[j]['enumOrUnitID']) {
+                        enumsOrUnitsToSelectArr.push(index)
+                        break
+                    }
+                    index++
+                }
+            }
+            this.selectCurrentGroupEnumsOrUnitsHelper(enumsOrUnitsToSelectArr)
+        },    
+    selectCurrentGroupEnumsOrUnitsHelper(indexes) {
+        let myTable = this.$refs['change-item-type-group-select-enums-or-units-table'].$el
+        let tableBody = myTable.getElementsByTagName('tbody')[0]
+        let tableRows = tableBody.getElementsByTagName('tr')
+        indexes.forEach(idx => {
+            tableRows[idx].click()
+        })
+    },  
+    onRowSelected(items) {
+        this.tableSelectedEnumsOrUnits = items
+    },       
   },
   computed: {
-    returnEnumOrUnitFields() {
-      if (this.selectedOBItemTypeType) {
-        if (this.selectedOBItemTypeType == 'units') {
-          return this.unit_fields
-        } else if (this.selectedOBItemTypeType == 'enums') {
-          return this.enum_fields
+    returnItemTypeEnumsOrUnitsFields() {
+        if (this.selectedOBItemTypeType == 'enums') {
+            return this.enumFields
+        } else if (this.selectedOBItemTypeType == 'units') {
+            return this.unitFields
         }
-      }   
     },
     itemTypeEnumsOrUnitsComputed() {
 		  return this.itemTypeEnumsOrUnits
     },
     allPossibleItemTypeGroups() {
       return this.possibleItemTypeGroups
-    }
+    },
+    allItemTypesComputed() {
+        let ret_arr = []
+        let itemTypeName = ''
+        for (let i in this.allItemTypes) {
+            itemTypeName = i
+            ret_arr.push(itemTypeName)
+        }
+
+        return ret_arr.sort()
+    }   
   },
   watch: {
     currentItemTypeGroup() {
@@ -148,6 +192,7 @@ export default {
       this.itemTypeEnumsOrUnits = []
 
       if (this.currentItemTypeGroup) {
+        this.currentGroupEnumsOrUnits = this.allItemTypeGroups[this.currentItemTypeGroup]['group']
         if ("enums" in currentItemTypeObj) {
           this.selectedOBItemTypeType = 'enums'
           for (let i in currentItemTypeObj['enums']) {
@@ -194,7 +239,11 @@ export default {
           }
         }         
       }
-     }
+      // wait until table has rendered, and then call click events to select current enums
+      this.$nextTick(function () {
+          this.selectCurrentGroupEnumsOrUnits(this.currentGroupEnumsOrUnits)
+      })  
+    }
   }
 };
 </script>
