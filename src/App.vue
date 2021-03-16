@@ -39,10 +39,11 @@ export default {
 
 body {
   margin: 0px;
+  overflow-y: hidden;
 }
 
 .router-view-cls {
-  margin-right: 250px;
+  margin-right: 150px;
   margin-left: 100px;
 }
 </style>

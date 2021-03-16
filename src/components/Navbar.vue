@@ -38,6 +38,9 @@
         Settings
       </template>
       <template v-slot:default>
+        <h5>Version: {{ $store.state.appVersion}} </h5>
+        <div class="line-break">
+        </div>           
         <h5>Dependencies Loaded:</h5>
         <p>
           <u>Master Solar Taxonomy:</u> <br />

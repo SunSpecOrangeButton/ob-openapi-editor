@@ -3,11 +3,12 @@ import Vuex from "vuex";
 import * as JSONEditor from "../utils/JSONEditor.js";
 import * as miscUtilities from "../utils/miscUtilities";
 import FileSaver from "file-saver";
-
+import { version } from "../../package.json";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    appVersion: version || 0,
     uploadedOASFileOriginal: null,
     schemaFile: null,
     allNodesFlat: [],
@@ -21,8 +22,6 @@ export default new Vuex.Store({
     nodeDescription: null,
     nodeEnum: null,
     nameRef: null,
-    showEditNodeView: false,
-    showDetailedView: true,
     listOfDefinitionElements: [],
     selectDefinitionNode: false,
     showCreateDefinitionForm: false,
@@ -64,13 +63,16 @@ export default new Vuex.Store({
 
     defnIsLocal: null,
 
+    // right pane state while in editing mode
     activeEditingView: "EditDefinitionFormDisabled",
+    // right pane state for views
+    activeEditorView: null,
+    // view state for Item Types Editor
+    activeItemTypesView: null,
 
     // after abbrev update
 
     nodeOBType: "",
-    nodeOBUnit: "",
-    nodeOBEnum: "",
     nodeOBUsageTips: "",
     nodeOBSampleValue: {},
 
@@ -79,7 +81,12 @@ export default new Vuex.Store({
     viewObjs: [],
 
     // refresh key is needed to re-render element list when switching between edit and view modes
-    refreshKey: null
+    refreshKey: null,
+
+    // units added to obtaxonomy update
+    nodeEnumsOrUnitsObj: null,
+    nodeOBItemTypeGroupName: null,
+    nodeOBItemTypeGroupObj: {}
   },
   mutations: {
     /*
@@ -232,18 +239,14 @@ export default new Vuex.Store({
       state.selectedDefnRefFile = payload.referenceFile;
       state.activeEditingView = "EditDefinitionFormDisabled";
 
+      state.nodeEnumsOrUnitsObj = null
+      state.nodeOBType = ''
+      state.nodeOBItemTypeGroupName = ''
+      state.nodeOBItemTypeGroupObj = {}
+
       if (state.selectedDefnRefFile[state.isSelected]["allOf"]) {
         for (let i in state.selectedDefnRefFile[state.isSelected]["allOf"]) {
           if (state.selectedDefnRefFile[state.isSelected]["allOf"][i]["type"]) {
-            if (
-              state.selectedDefnRefFile[state.isSelected]["allOf"][i]["enum"]
-            ) {
-              state.nodeEnum =
-                state.selectedDefnRefFile[state.isSelected]["allOf"][i]["enum"];
-            } else {
-              state.nodeEnum = null;
-            }
-
             if (
               state.selectedDefnRefFile[state.isSelected]["allOf"][i][
               "x-ob-item-type"
@@ -257,31 +260,12 @@ export default new Vuex.Store({
               state.nodeOBType = "";
             }
 
-            if (
-              state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-              "x-ob-unit"
-              ]
-            ) {
-              state.nodeOBUnit =
-                state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                "x-ob-unit"
-                ];
-            } else {
-              state.nodeOBUnit = "";
-            }
-
-            if (
-              state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-              "x-ob-enum"
-              ]
-            ) {
-              state.nodeOBEnum =
-                state.selectedDefnRefFile[state.isSelected]["allOf"][i][
-                "x-ob-enum"
-                ];
-            } else {
-              state.nodeOBEnum = "";
-            }
+            if ("x-ob-item-type-group" in state.selectedDefnRefFile[state.isSelected]["allOf"][i]
+              && state.selectedDefnRefFile[state.isSelected]["allOf"][i]["x-ob-item-type-group"]) {
+                state.nodeOBItemTypeGroupName = state.selectedDefnRefFile[state.isSelected]["allOf"][i]["x-ob-item-type-group"]
+              } else {
+                state.nodeOBItemTypeGroupName = ''
+              }
 
             if (
               state.selectedDefnRefFile[state.isSelected]["allOf"][i][
@@ -323,6 +307,7 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
+        state.nodeOBType = "";
       } else if (state.selectedDefnRefFile[state.isSelected]["type"] == "array") {
         if (
           state.selectedDefnRefFile[state.isSelected][
@@ -336,12 +321,20 @@ export default new Vuex.Store({
         } else {
           state.nodeOBUsageTips = "";
         }
-      } else {
-        state.nodeEnum = null;
-        state.nodeOBEnum = "";
         state.nodeOBType = "";
-        state.nodeOBUnit = "";
+      } else {
+        state.nodeOBType = "";
         state.nodeOBUsageTips = "";
+      }
+
+      // set nodeEnumsOrUnitsObj
+      if (state.nodeOBType && state.loadedFiles[state.selectedFileName]["item_types"]) {
+        state.nodeEnumsOrUnitsObj = state.loadedFiles[state.selectedFileName]["item_types"][state.nodeOBType]
+      }
+
+      // set node item type group obj
+      if (state.nodeOBItemTypeGroupName && state.loadedFiles[state.selectedFileName]["item_type_groups"]) {
+        state.nodeOBItemTypeGroupObj = state.loadedFiles[state.selectedFileName]["item_type_groups"][state.nodeOBItemTypeGroupName]
       }
     },
 
@@ -349,12 +342,54 @@ export default new Vuex.Store({
       Editor view handling
     */
     showDetailedView(state) {
-      state.showEditNodeView = false;
-      state.showDetailedView = true;
-      state.showCreateDefinitionForm = false;
-      state.showLoadInDefinitionForm = false;
+      state.activeEditorView = "DetailedNodeView"
+    },
+    showEditNodeView(state) {
+      state.activeEditorView = "EditDefinition"
+      state.selectDefinitionNode = true;
+    },
+    showCreateDefinitionForm(state) {
+      state.activeEditorView = "CreateDefinitionForm"
+    },
+    showLoadInDefinitionForm(state) {
+      state.activeEditorView = "LoadInDefinition"
+    },
+    showEditItemTypesMain(state) {
+      state.activeEditorView = "EditItemTypesMain"
+    },
+    showNoView(state) {
+      state.activeEditorView = null
     },
 
+    // show state for Item Types Editor
+    // todo: consolidate into one function you pass the string to
+    showCreateItemType(state) {
+      state.activeItemTypesView = "CreateItemType"
+    },
+    showCreateItemTypeGroup(state) {
+      state.activeItemTypesView = "CreateItemTypeGroup"
+    },
+    showEditItemType(state) {
+      state.activeItemTypesView = "EditItemType"
+    },
+    showEditItemTypeGroup(state) {
+      state.activeItemTypesView = "EditItemTypeGroup"
+    },
+    showViewAllItemTypes(state) {
+      state.activeItemTypesView = "ViewAllItemTypes"
+    },
+    showViewAllItemTypeGroups(state) {
+      state.activeItemTypesView = "ViewAllItemTypeGroups"
+    },
+    showNoItemTypesViews(state) {
+      state.activeItemTypesView = null
+    },
+    showDeleteItemType(state) {
+      state.activeItemTypesView = "DeleteItemType"
+    },
+    showDeleteItemTypeGroup(state) {
+      state.activeItemTypesView = "DeleteItemTypeGroup"
+    },
     /* 
       JSON file handling
     */
@@ -386,26 +421,6 @@ export default new Vuex.Store({
     },
     toggleSelectNode(state) {
       state.isSelected = false;
-    },
-    showEditNodeView(state) {
-      state.showDetailedView = false;
-      state.showEditNodeView = true;
-      state.selectDefinitionNode = true;
-    },
-
-    showCreateDefinitionForm(state) {
-      state.showCreateDefinitionForm = true;
-      state.showDetailedView = false;
-      state.showCreateNodeObjectView = false;
-      state.showEditNodeView = false;
-      state.showLoadInDefinitionForm = false;
-    },
-    showLoadInDefinitionForm(state) {
-      state.showLoadInDefinitionForm = true;
-      state.showDetailedView = false;
-      state.showCreateNodeObjectView = false;
-      state.showEditNodeView = false;
-      state.showCreateDefinitionForm = false;
     },
     createNodeElement(state, payload) {
       let node_attr = {
@@ -536,6 +551,94 @@ export default new Vuex.Store({
 
       Vue.set(state.currentFile.file, payload.definitionName, defn_attr);
     },
+    createItemType(state, payload) {
+      let finalItemTypeObj = {}
+      let finalEnumsOrUnits = {}
+      finalItemTypeObj['description'] = payload.itemTypeDescription
+
+      payload.itemTypeEnumsOrUnits.forEach( enumOrUnitObj => {
+        finalEnumsOrUnits[enumOrUnitObj['enumOrUnitID']] = {
+          "label": enumOrUnitObj['enumOrUnitLabel'],
+          "description": enumOrUnitObj['enumOrUnitDescription']
+        }
+      })
+
+      if (payload.itemTypeType == 'units') {
+        finalItemTypeObj['units'] = finalEnumsOrUnits
+      } else if (payload.itemTypeType == 'enums') {
+        finalItemTypeObj['enums'] = finalEnumsOrUnits
+      }
+
+      Vue.set(state.currentFile.item_types, payload.itemTypeName, finalItemTypeObj)
+
+    },
+    // edits the item type in the definiton file under obj 'x-ob-item-type'
+    editItemTypeDefn(state, payload) {
+      let finalEdittedItemTypeObj = {}
+      let finalEnumsOrUnits = {}
+
+      finalEdittedItemTypeObj['description'] = payload.itemTypeDescription
+      payload.itemTypeEnumsOrUnits.forEach( enumOrUnitObj => {
+        finalEnumsOrUnits[enumOrUnitObj['enumOrUnitID']] = {
+          "label": enumOrUnitObj['enumOrUnitLabel'],
+          "description": enumOrUnitObj['enumOrUnitDescription']
+        }
+      })
+
+      if (payload.itemTypeType == 'units') {
+        finalEdittedItemTypeObj['units'] = finalEnumsOrUnits
+      } else if (payload.itemTypeType == 'enums') {
+        finalEdittedItemTypeObj['enums'] = finalEnumsOrUnits
+      }
+      Vue.set(state.currentFile.item_types, payload.itemTypeName, finalEdittedItemTypeObj)
+
+    },
+    createItemTypeGroup(state, payload) {
+      let finalItemTypeGroupObj = {}
+      let finalEnumsOrUnits = []
+
+      if (payload.itemTypeGroupGroup.length) {
+        payload.itemTypeGroupGroup.forEach( enumOrUnitObj => {
+          finalEnumsOrUnits.push(enumOrUnitObj['enumOrUnitID'])
+        })
+      }
+
+      finalItemTypeGroupObj = {
+        "type": payload.baseItemTypeRef,
+        "description": payload.itemTypeGroupDescription,
+        "group" : finalEnumsOrUnits
+      }
+
+      Vue.set(state.currentFile.item_type_groups, payload.itemTypeGroupName, finalItemTypeGroupObj)
+    },
+    editItemTypeGroup(state, payload) {
+      let finalEdittedItemTypeGroupObj = {}
+      let finalEnumsOrUnits = []
+
+      if (payload.itemTypeGroupGroup.length) {
+        payload.itemTypeGroupGroup.forEach( enumOrUnitObj => {
+          finalEnumsOrUnits.push(enumOrUnitObj['enumOrUnitID'])
+        })
+      }
+
+      finalEdittedItemTypeGroupObj = {
+        "type": payload.baseItemTypeRef,
+        "description": payload.itemTypeGroupDescription,
+        "group" : finalEnumsOrUnits
+      }
+
+      Vue.set(state.currentFile.item_type_groups, payload.itemTypeGroupName, finalEdittedItemTypeGroupObj)
+    },
+    deleteItemType(state, payload) {
+      Vue.delete(state.currentFile.item_types, payload.itemTypeToDelete[0]["itemType"])
+
+
+    },
+    deleteItemTypeGroup(state, payload) {
+      Vue.delete(state.currentFile.item_type_groups, payload.itemTypeGroupToDelete[0]["itemTypeGroupName"])
+
+
+    },
     // Refreshes form inputs when trying to hit add definition after already adding a defn
     refreshCreateDefnInputs(state, refreshBool) {
       state.refreshCreateDefn = refreshBool;
@@ -549,9 +652,7 @@ export default new Vuex.Store({
       state.exportModalOpened = payload;
     },
     clearEditorView(state) {
-      state.showDetailedView = false;
-      state.showEditNodeView = false;
-      state.showCreateDefinitionForm = false;
+      state.activeEditorView = null
       state.isSelected = null;
       state.nameRef = null;
     },
@@ -578,28 +679,50 @@ export default new Vuex.Store({
 
       JSONEditor.loadInDefinition(currentFile, defnName, defnFile);
     },
-    editItemType(state, payload) {
+    changeItemType(state, payload) {
 
       state.nodeOBType = payload.OBItemType;
-      state.nodeOBUnit = payload.OBUnits;
-      state.nodeOBEnum = payload.OBEnum;
+
       for (let i in state.currentFile.file[state.isSelected]["allOf"]) {
         if (state.currentFile.file[state.isSelected]["allOf"][i]["type"]) {
           Vue.set(
             state.currentFile.file[state.isSelected]["allOf"][i],
             "x-ob-item-type",
             payload.OBItemType
-          );
+          )
+          state.nodeEnumsOrUnitsObj = state.loadedFiles[state.selectedFileName]["item_types"][state.nodeOBType]
+
+          // if item group for element does not match
+          if ("x-ob-item-type-group" in state.currentFile.file[state.isSelected]["allOf"][i]
+            && state.currentFile.file[state.isSelected]["allOf"][i]["x-ob-item-type-group"]) {
+              let currentItemTypeGroup = state.currentFile.file[state.isSelected]["allOf"][i]["x-ob-item-type-group"]
+              if (!state.loadedFiles[state.selectedFileName]["item_type_groups"][currentItemTypeGroup]['type'].includes(payload.OBItemType)) {
+                Vue.set(
+                  state.currentFile.file[state.isSelected]["allOf"][i],
+                  "x-ob-item-type-group",
+                  ''
+                )
+                state.nodeOBItemTypeGroupName = ''
+                state.nodeOBItemTypeGroupObj = {}
+              }
+            }
+        }
+      }
+    },
+    changeItemTypeGroup(state, payload) {
+      state.nodeOBItemTypeGroupName = payload.OBItemTypeGroupName
+      state.nodeOBItemTypeGroupObj = {}
+      if (payload.OBItemTypeGroupName) {
+        state.nodeOBItemTypeGroupObj = state.loadedFiles[state.selectedFileName]["item_type_groups"][state.nodeOBItemTypeGroupName]
+      }
+
+      for (let i in state.currentFile.file[state.isSelected]["allOf"]) {
+        if (state.currentFile.file[state.isSelected]["allOf"][i]["type"]) {
           Vue.set(
             state.currentFile.file[state.isSelected]["allOf"][i],
-            "x-ob-unit",
-            payload.OBUnits
-          );
-          Vue.set(
-            state.currentFile.file[state.isSelected]["allOf"][i],
-            "x-ob-enum",
-            payload.OBEnum
-          );
+            "x-ob-item-type-group",
+            payload.OBItemTypeGroupName
+          )          
         }
       }
     },

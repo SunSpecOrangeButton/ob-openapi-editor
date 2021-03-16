@@ -37,26 +37,18 @@ Is the parent of all the editing components
           $store.state.nodeType == 'element' || $store.state.isTaxonomyElement
         "
         variant="secondary"
-        @click="addEnum"
-      >Add Enumeration</b-button>
+        @click="changeItemType"
+      >Change Item Type</b-button>
       <b-button
         class="edit-btn"
         v-if="
           $store.state.nodeType == 'element' || $store.state.isTaxonomyElement
         "
         variant="secondary"
-        @click="removeEnum"
-      >Remove Enumeration</b-button>
-      <b-button
-        class="edit-btn"
-        v-if="
-          $store.state.nodeType == 'element' || $store.state.isTaxonomyElement
-        "
-        variant="secondary"
-        @click="editItemType"
-      >Edit Item Type</b-button>
+        @click="changeItemTypeGroup"
+      >Change Item Type Group</b-button>        
       <b-button class="edit-btn" variant="secondary" @click="editUsageTips">Edit Usage Tips</b-button>
-      <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement" @click="editSampleValue">Edit Sample Value</b-button>
+      <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement" @click="editSampleValue">Edit Sample</b-button>
     </span>
     <div
       class="previous-view-button"
@@ -75,7 +67,8 @@ import EditDefinitionFormDisabled from "./EditDefinitionFormDisabled.vue";
 import RemoveInheritance from "./RemoveInheritance.vue";
 import AddEnum from "./AddEnum.vue";
 import RemoveEnum from "./RemoveEnum.vue";
-import EditItemType from "./EditItemType.vue";
+import ChangeItemType from "./ChangeItemType.vue";
+import ChangeItemTypeGroup from "./ChangeItemTypeGroup.vue"
 import EditUsageTips from "./EditUsageTips";
 import EditSampleValue from "./EditSampleValue";
 
@@ -91,7 +84,8 @@ export default {
     RemoveInheritance,
     AddEnum,
     RemoveEnum,
-    EditItemType,
+    ChangeItemType,
+    ChangeItemTypeGroup,    
     EditUsageTips,
     EditSampleValue
   },
@@ -106,16 +100,8 @@ export default {
     };
   },
   methods: {
-    showDetailedView() {
-      this.preSubmit = true;
-      this.$store.commit("selectNone");
-      this.$store.commit("showDetailedView");
-      this.addMemberButton = true;
-      this.addingChild = false;
-    },
     backToPrevView() {
-      this.$store.state.showEditNodeView = false;
-      this.$store.state.showDetailedView = true;
+      this.$store.commit("showDetailedView");
     },
     editNodeSubmit() {
       this.preSubmit = false;
@@ -148,8 +134,11 @@ export default {
     removeEnum() {
       this.$store.state.activeEditingView = "RemoveEnum";
     },
-    editItemType() {
-      this.$store.state.activeEditingView = "EditItemType";
+    changeItemType() {
+      this.$store.state.activeEditingView = "ChangeItemType";
+    },
+    changeItemTypeGroup() {
+      this.$store.state.activeEditingView = "ChangeItemTypeGroup"
     },
     editUsageTips() {
       this.$store.state.activeEditingView = "EditUsageTips";

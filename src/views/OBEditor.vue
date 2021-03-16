@@ -346,13 +346,7 @@
       </div>
     </div>
     <div class="element-selector-footer">
-      <b-button
-        variant="primary"
-        size="sm"
-        @click="toggleExpandAll"
-        :disabled="!$store.state.currentFile"
-        v-if="$store.state.viewerMode == 'Edit Mode'"
-      >
+      <b-button variant="primary" size="sm" @click="toggleExpandAll" :disabled="!$store.state.currentFile" v-if="$store.state.viewerMode == 'Edit Mode'">
         <span v-if="expandAllObjects">
           Collapse All
         </span>
@@ -360,33 +354,38 @@
           Expand All
         </span>
       </b-button>
-      <b-button
-        variant="primary"
-        size="sm"
-        @click="showCreateDefinitionForm"
-        :disabled="!$store.state.currentFile"
-        v-if="$store.state.viewerMode == 'Edit Mode'"
-        >Create New Definition</b-button
-      >
-      <b-button
-        variant="primary"
-        size="sm"
-        @click="showLoadInDefinitionForm"
-        :disabled="!$store.state.currentFile"
-        v-if="$store.state.viewerMode == 'Edit Mode'"
-        >Load In Definition</b-button
-      >
+
+      <b-button variant="primary" size="sm" @click="showCreateDefinitionForm" :disabled="!$store.state.currentFile" v-if="$store.state.viewerMode == 'Edit Mode'">
+        Create New Definition
+      </b-button>
+
+      <b-button variant="primary" size="sm" @click="showLoadInDefinitionForm" :disabled="!$store.state.currentFile" v-if="$store.state.viewerMode == 'Edit Mode'">
+        Load In Definition
+      </b-button>
+
+      <b-button variant="primary" size="sm" @click="showEditItemTypesMain" v-if="$store.state.viewerMode == 'Edit Mode'" :disabled="!$store.state.currentFile">Item Types Editor</b-button>
     </div>
     <div class="element-editor-header">
       <div class="editor-header">
-        <h4 v-if="$store.state.showDetailedView">Detailed View</h4>
-        <h4 v-if="$store.state.showEditNodeView">
+        <h4 v-if="$store.state.activeEditorView == 'DetailedNodeView'">Detailed View</h4>
+        <h4 v-if="$store.state.activeEditorView == 'EditDefinition'">
           Edit <strong>{{ $store.state.isSelected }}</strong>
         </h4>
-        <h4 v-show="$store.state.showCreateDefinitionForm">
+        <h4 v-if="$store.state.activeEditorView == 'CreateDefinitionForm'">
           Create Definition
         </h4>
-        <h4 v-if="$store.state.showLoadInDefinitionForm">Load In Definition</h4>
+        <h4 v-if="$store.state.activeEditorView == 'LoadInDefinition'">Load In Definition</h4>
+        <h4 v-if="$store.state.activeEditorView == 'EditItemTypesMain'">
+          <h4 v-if="!$store.state.activeItemTypesView">Item Types Editor</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'ViewAllItemTypes'">View All Item Types</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'CreateItemType'">Create Item Type</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'EditItemType'">Edit Item Type</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'CreateItemTypeGroup'">Create Item Type Group</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'EditItemTypeGroup'">Edit Item Type Group</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'DeleteItemTypeGroup'">Delete Item Type Group</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'ViewAllItemTypeGroups'">View All Item Type Groups</h4>
+          <h4 v-else-if="$store.state.activeItemTypesView == 'DeleteItemType'">Delete Item Type</h4>
+        </h4>
       </div>
       <div class="download-button-container">
         <b-button
@@ -410,10 +409,11 @@
       </div>
     </div>
     <div class="element-editor-body">
-      <DetailedNodeView v-if="$store.state.showDetailedView" />
+      <!-- <DetailedNodeView v-if="$store.state.showDetailedView" />
       <EditDefinition v-if="$store.state.showEditNodeView" />
       <CreateDefinitionForm v-show="$store.state.showCreateDefinitionForm" />
-      <LoadInDefinition v-if="$store.state.showLoadInDefinitionForm" />
+      <LoadInDefinition v-if="$store.state.showLoadInDefinitionForm" /> -->
+      <component :is="$store.state.activeEditorView"></component>
     </div>
 
     <!-- Modals -->
@@ -456,6 +456,7 @@ import CreateDefinitionForm from "../components/forms/CreateDefinitionForm.vue";
 import ExportFormModal from "../components/forms/ExportFormModal";
 import LoadInDefinition from "../components/EditDefinition/LoadInDefinition";
 import EditDefinition from "../components/EditDefinition/EditDefinition";
+import EditItemTypesMain from "../components/ItemTypes/EditItemTypesMain"
 import * as miscUtilities from "../utils/miscUtilities";
 import * as JSONEditor from "../utils/JSONEditor.js";
 import SolarTaxonomyMaster from "@/assets/master_files/Master-Solar-Taxonomy.json";
@@ -469,7 +470,8 @@ export default {
     CreateDefinitionForm,
     ExportFormModal,
     EditDefinition,
-    LoadInDefinition
+    LoadInDefinition,
+    EditItemTypesMain
   },
   created() {
     // if query params, create cookie
@@ -515,6 +517,32 @@ export default {
       file: OBOpenAPIMaster.components.schemas,
       fileName: "Master-OB-OpenAPI.json"
     };
+
+    // load in item type for default definition files (solar and ob)
+    if (this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]['fullFileForExport']['x-ob-item-types']) {
+      this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]["item_types"] = this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]['fullFileForExport']['x-ob-item-types']
+    } else {
+      this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]["item_types"] = {}
+    }
+
+    if (this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]['fullFileForExport']['x-ob-item-types']) {
+      this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]["item_types"] = this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]['fullFileForExport']['x-ob-item-types']
+    } else {
+      this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]["item_types"] = {}
+    }
+
+    // load in item type groups for default definition files (solar and ob)
+    if (this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]['fullFileForExport']['x-ob-item-type-groups']) {
+      this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]["item_type_groups"] = this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]['fullFileForExport']['x-ob-item-type-groups']
+    } else {
+      this.$store.state.loadedFiles["Master-Solar-Taxonomy.json"]["item_type_groups"] = {}
+    }
+
+    if (this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]['fullFileForExport']['x-ob-item-type-groups']) {
+      this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]["item_type_groups"] = this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]['fullFileForExport']['x-ob-item-type-groups']
+    } else {
+      this.$store.state.loadedFiles["Master-OB-OpenAPI.json"]["item_type_groups"] = {}
+    }
 
     this.file = this.$store.state.loadedFiles["Master-OB-OpenAPI.json"];
     this.loadDependencyFile()
@@ -634,13 +662,18 @@ export default {
       this.$store.commit("exportFile");
     },
     showCreateDefinitionForm() {
-      this.$store.commit("selectNone");
+      this.$store.commit("selectNone")
       this.$store.commit("showCreateDefinitionForm");
       this.$store.commit("refreshCreateDefnInputs", true);
     },
     showLoadInDefinitionForm() {
-      this.$store.commit("selectNone");
+      this.$store.commit("selectNone")
       this.$store.commit("showLoadInDefinitionForm");
+    },
+    showEditItemTypesMain() {
+      this.$store.commit("selectNone")
+      this.$store.commit("showNoItemTypesViews")
+      this.$store.commit("showEditItemTypesMain");
     },
     toggleExpandAll() {
       this.expandAllObjects = !this.expandAllObjects;
@@ -723,6 +756,21 @@ export default {
       reader.onload = () => {
         file_obj["fullFileForExport"] = JSON.parse(reader.result);
         file_obj["file"] = file_obj["fullFileForExport"].components.schemas;
+
+        // todo: refactor to make into a function that is also used in create() 
+        // stores item types and item types groups of loaded file
+        if (file_obj["fullFileForExport"]["x-ob-item-types"]) {
+          file_obj["item_types"] = file_obj["fullFileForExport"]["x-ob-item-types"]
+        } else {
+          file_obj["item_types"] = {}
+        }
+
+        if (file_obj["fullFileForExport"]["x-ob-item-type-groups"]) {
+          file_obj["item_type_groups"] = file_obj["fullFileForExport"]["x-ob-item-type-groups"]
+        } else {
+          file_obj["item_type_groups"] = {}
+        }
+
         for (let i in this.$store.state.fileTabs) {
           if (this.$store.state.fileTabs[i].fileName == file_obj.fileName) {
             check_duplicate_file = true;
@@ -752,6 +800,8 @@ export default {
       this.$store.state.currentFile = this.$store.state.fileTabs[
         this.$store.state.currentTabIndexFileEditor
       ];
+      if (this.$store.state.currentFile)
+        this.$store.state.selectedFileName = this.$store.state.currentFile["fileName"]
     },
     getNodeDescription(nodeObj) {
       return nodeObj["description"];
@@ -806,10 +856,10 @@ export default {
       this.$store.state.currentFile = this.$store.state.fileTabs[
         this.$store.state.currentTabIndexFileEditor
       ];
+      if (this.$store.state.currentFile)
+        this.$store.state.selectedFileName = this.$store.state.currentFile["fileName"]
 
-      this.$store.state.showDetailedView = false;
-      this.$store.state.showEditNodeView = false;
-      this.$store.state.showCreateDefinitionForm = false;
+      this.$store.commit('showNoView')
 
       this.$store.state.isSelected = null;
       this.$store.state.nameRef = null;
@@ -861,16 +911,12 @@ export default {
         this.$store.state.nodeParent = "root";
       }
     },
-
     "$store.state.inXBRLTab"() {
       this.numOfElem = 50;
       this.$store.state.treeSearchTerm = "";
-      this.$store.state.showDetailedView = false;
       this.$store.state.nameRef = "";
-      this.$store.state.showEditNodeView = false;
-      this.$store.state.showCreateDefinitionForm = false;
+      this.$store.commit("showNoView")
     },
-
     showAddFileModal() {
       this.file = null;
       this.fileAlreadyOpened = false;
@@ -883,7 +929,6 @@ export default {
       this.selectedDependencyInfo = null;
       this.selectedDependencyFileName = null;
     },
-
     file() {
       if (this.file) {
         // console.log(this.file.name)
@@ -1064,7 +1109,7 @@ export default {
 .ob-editor-container {
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.17fr;
   grid-template-rows: 54px 1fr 50px;
   background-color: #f7f7f7;
 }
@@ -1086,10 +1131,10 @@ export default {
   grid-column: 1 / 2;
   grid-row: 3 /4;
   border: #d3d3d3 solid 1px;
-  padding-left: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .element-editor-header {
