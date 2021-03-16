@@ -14,7 +14,7 @@ Child of EditDefinition, edit definition form
           <b-form-select
             id="node-item-type-input"
             v-model="selectedOBItemType"
-            :options="allItemTypes"
+            :options="allItemTypesComputed"
           ></b-form-select>
         </b-form-group>
 
@@ -66,7 +66,7 @@ import utrTypes from "@/assets/type_files/utr-units.json";
 export default {
   created() {
     this.allItemTypes = this.$store.state.loadedFiles[this.$store.state.selectedFileName]["item_types"]
-	this.selectedOBItemType = this.$store.state.nodeOBType;
+	  this.selectedOBItemType = this.$store.state.nodeOBType;
   },
   data() {
     return {
@@ -99,17 +99,27 @@ export default {
   },
   computed: {
     returnEnumOrUnitFields() {
-		if (this.selectedOBItemTypeType) {
-			if (this.selectedOBItemTypeType == 'units') {
-				return this.unit_fields
-			} else if (this.selectedOBItemTypeType == 'enums') {
-				return this.enum_fields
-			}
-		}   
+      if (this.selectedOBItemTypeType) {
+        if (this.selectedOBItemTypeType == 'units') {
+          return this.unit_fields
+        } else if (this.selectedOBItemTypeType == 'enums') {
+          return this.enum_fields
+        }
+      }   
     },
     itemTypeEnumsOrUnitsComputed() {
-		return this.itemTypeEnumsOrUnits
-    }
+		  return this.itemTypeEnumsOrUnits
+    },
+    allItemTypesComputed() {
+        let ret_arr = []
+        let itemTypeName = ''
+        for (let i in this.allItemTypes) {
+            itemTypeName = i
+            ret_arr.push(itemTypeName)
+        }
+
+        return ret_arr.sort()
+    },    
   },
   watch: {
     selectedOBItemType() {
