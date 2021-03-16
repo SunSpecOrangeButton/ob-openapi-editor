@@ -53,7 +53,7 @@
 
       <b-form-group
         id="node-sample-value-input-group"
-        label="Sample value:"
+        label="Sample:"
         label-for="node-sample-value-input"
       >
         <b-form-textarea
@@ -88,14 +88,14 @@
         <span v-if="selectedOBItemType.includes('solar-types')">
           <b-table
             :items="itemTypeUnits"
-            id="detailsTable"
+            class="detailsTable"
             ref="itemTypeUnitsTable"
           ></b-table>
         </span>
         <span v-else>
           <b-table
             :items="itemTypeUnits"
-            id="detailsTable"
+            class="detailsTable"
             ref="itemTypeUnitsTable"
           ></b-table>
         </span>
@@ -142,7 +142,7 @@
         <b-button v-if="preSubmit" type="submit" @click.prevent="createElement"
           >Create</b-button
         >
-        <b-button v-if="preSubmit" @click="showDetailedView">Cancel</b-button>
+        <b-button v-if="preSubmit" @click="exitView">Cancel</b-button>
       </span>
     </b-form>
     <b-modal
@@ -218,13 +218,13 @@ export default {
         return false;
       }
     },
-    showDetailedView() {
+    exitView() {
       this.definitionName = null;
       this.definitionType = null;
       this.definitionDescription = null;
       this.selectedOBItemType = null;
       this.preSubmit = true;
-      this.$store.commit("showDetailedView");
+      this.$store.commit("showNoView");
     },
     createElement() {
       if(!this.definitionType) {

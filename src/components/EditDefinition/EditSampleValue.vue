@@ -5,7 +5,7 @@ Component for adding/removing sample value to definitions
 <template>
   <div class="editor-function-container">
     <div class="editor-function-body-container">
-      <p>Sample Value:</p>
+      <p>Sample:</p>
       <b-form-textarea
         id="textarea"
         v-model="sampleValue"

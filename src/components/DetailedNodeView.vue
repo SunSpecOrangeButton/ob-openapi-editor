@@ -1,7 +1,62 @@
 <template>
   <div class="detailed-view-container">
     <span v-if="$store.state.isSelected">
-      <b-table :fields="fields" :items="defnDetails" id="detailsTable" ref="nodeDetailTable"></b-table>
+      <b-table :fields="fields" :items="defnDetails" class="detailsTable" ref="nodeDetailTable">
+        <template #cell(values)="row">
+            <div class="unit-row-value">
+                {{ row.item.Values }}
+            </div>
+            <b-button class="unit-row-expand-details" 
+              size="sm" 
+              @click="row.toggleDetails" 
+              v-if="row.item.Attributes == 'OB Item Type' && ItemTypeType && !nodeOBItemTypeGroupName">
+              <div v-if="ItemTypeType == 'units'">
+                {{ 'View Units' }}
+              </div>
+              <div v-else-if="ItemTypeType == 'enums'">
+                {{ 'View Enums' }}
+              </div>
+            </b-button>
+
+            <b-badge v-else-if="row.item.Attributes == 'OB Item Type' && !ItemTypeType">
+              {{ 'No units/enums'}}
+            </b-badge>
+            <b-button class="unit-row-expand-details" 
+              size="sm" 
+              @click="row.toggleDetails" 
+              v-if="row.item.Attributes == 'OB Item Type Group' && ItemTypeType && nodeOBItemTypeGroupName">
+              <div v-if="ItemTypeType == 'units'">
+                {{ 'View Units' }}
+              </div>
+              <div v-else-if="ItemTypeType == 'enums'">
+                {{ 'View Enums' }}
+              </div>
+            </b-button>
+            <b-badge v-else-if="row.item.Attributes == 'OB Item Type Group' && !ItemTypeType">
+              {{ 'No units/enums'}}
+            </b-badge>            
+        </template>
+
+        <template #row-details="row">
+          <div v-if="!nodeOBItemTypeGroupName">
+            <b-card id="unit-row-expand-details-card">
+                <b-table :fields="returnItemTypeEnumsOrUnitsFields" :items="itemTypeEnumsOrUnitsDetails"></b-table>
+                <div class="hide-unit-table-btn">
+                  <b-button size="sm" class="unit-table-hide-btn" @click="row.toggleDetails">Hide</b-button>
+                </div>
+            </b-card>
+          </div>
+
+          <div v-else>
+            <b-card id="item-type-group-details-card">
+                <b-table :fields="returnItemTypeEnumsOrUnitsFields" :items="itemTypeGroupEnumsOrUnitsDetails"></b-table>
+                <div class="hide-unit-table-btn">
+                  <b-button size="sm" class="unit-table-hide-btn" @click="row.toggleDetails">Hide</b-button>
+                </div>
+            </b-card>              
+          </div>
+        </template>
+      </b-table>
       <div class="detailed-view-buttons">
         <span v-if="$store.state.inOASTab">
           <b-button
@@ -18,7 +73,9 @@
             v-b-modal.modal-edit-node
             :disabled="!$store.state.defnIsLocal"
           >Edit definition</b-button>
-          <b-button variant="primary" size="sm" @click="exportSampleJSON" v-if="$store.state.nodeParent == 'root' && $store.state.viewerMode == 'Edit Mode'">Create Sample JSON</b-button>
+          <b-button variant="primary" size="sm" @click="exportSampleJSON" v-if="$store.state.nodeParent == 'root' && $store.state.viewerMode == 'Edit Mode'">
+            Create Sample JSON
+          </b-button>
           <b-button v-b-modal.modal-delete-node variant="danger" size="sm" v-if="$store.state.viewerMode == 'Edit Mode'">
             <span v-if="$store.state.nodeParent == 'root'">Delete</span>
             <span v-else>Remove</span>
@@ -68,7 +125,21 @@ export default {
       defnName: "",
       showError: false,
       fields: ["Attributes", "Values"],
-      refreshFields: true
+      unitFields: [
+          { key: "enumOrUnitID", label: "Unit ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Unit Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Unit Description"}
+      ],
+      enumFields: [
+          { key: "enumOrUnitID", label: "Enum ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Enum Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Enum Description"}
+      ],
+      refreshFields: true,
+      nodeEnumsOrUnitsObj: null,
+      ItemTypeType: null,
+      nodeOBItemTypeGroupName: '',
+      nodeOBItemTypeGroupGroupObj: {}
     };
   },
   methods: {
@@ -100,9 +171,6 @@ export default {
     },
     showEditNodeView() {
       this.$store.commit("showEditNodeView");
-    },
-    cancelDetailedView() {
-      this.$store.state.showDetailedView = false;
     }
   },
   watch: {
@@ -167,15 +235,32 @@ export default {
       let temp_superClassList = [];
       let temp_superClassListStr = "";
       let temp_ret_obj = null;
-      let temp_enum = this.$store.state.nodeEnum;
       let arrayItemName = null;
       let defnOBType = this.$store.state.nodeOBType;
-      let defnOBUnit = this.$store.state.nodeOBUnit;
-      let defnOBEnum = this.$store.state.nodeOBEnum;
       let defnOBUsageTips = this.$store.state.nodeOBUsageTips;
       let defnOBSampleValue = this.$store.state.nodeOBSampleValue;
+      this.nodeEnumsOrUnitsObj = this.$store.state.nodeEnumsOrUnitsObj
+
+      let tmpItemTypeGroupName = this.$store.state.nodeOBItemTypeGroupName
+      this.nodeOBItemTypeGroupName = this.$store.state.nodeOBItemTypeGroupName
+      this.nodeOBItemTypeGroupGroupObj = this.$store.state.nodeOBItemTypeGroupObj
+      let tmpItemTypeGroupGroupObj = this.$store.state.nodeOBItemTypeGroupObj
 
       this.refreshFields = !this.refreshFields;
+
+      if (this.nodeEnumsOrUnitsObj) {
+        if (this.nodeEnumsOrUnitsObj['units']) {
+          this.ItemTypeType = 'units'
+        } else if (this.nodeEnumsOrUnitsObj['enums']) {
+          this.ItemTypeType = 'enums'
+        } else {
+          this.ItemTypeType = null
+        }
+      }
+
+      if (!tmpItemTypeGroupName) {
+        tmpItemTypeGroupName = "None"
+      }
 
       if (!temp_doc) {
         temp_doc = "Documentation not available";
@@ -183,14 +268,6 @@ export default {
 
       if (!defnOBType) {
         defnOBType = "None";
-      }
-
-      if (!defnOBUnit) {
-        defnOBUnit = "None";
-      }
-
-      if (!defnOBEnum) {
-        defnOBEnum = "None";
       }
 
       if (!defnOBUsageTips) {
@@ -201,11 +278,6 @@ export default {
         defnOBSampleValue = "None";
       }
 
-      if (!temp_enum) {
-        temp_enum = "None";
-      } else {
-        temp_enum = temp_enum.join(", ");
-      }
       let defnDoc = this.$store.state.selectedDefnRefFile;
 
       if (defnDoc[this.$store.state.isSelected]["allOf"]) {
@@ -234,23 +306,21 @@ export default {
       ) {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
-          { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
+          { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Superclasses", Values: temp_superClassListStr },
           { Attributes: "Usage Tips", Values: defnOBUsageTips }
         ];
       } else if (this.$store.state.isTaxonomyElement) {
         temp_ret_obj = [
           { Attributes: "Name", Values: this.$store.state.nodeName },
-          { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "Documentation", Values: temp_doc },
-          { Attributes: "Enumeration", Values: temp_enum },
+          { Attributes: "Type", Values: this.$store.state.nodeType },
           { Attributes: "OB Item Type", Values: defnOBType },
-          { Attributes: "OB Unit", Values: defnOBUnit },
-          { Attributes: "OB Enumeration", Values: defnOBEnum },
+          { Attributes: "OB Item Type Group", Values: tmpItemTypeGroupName},
           { Attributes: "Superclasses", Values: temp_superClassListStr },
           { Attributes: "Usage Tips", Values: defnOBUsageTips },
-          { Attributes: "Sample Value", Values: defnOBSampleValue }
+          { Attributes: "Sample", Values: defnOBSampleValue }
         ];
       } else if (defnDoc[this.$store.state.isSelected]["type"] == "array") {
         arrayItemName = defnDoc[this.$store.state.isSelected]["items"][
@@ -279,13 +349,91 @@ export default {
       let arr = temp_ret_obj;
 
       return arr;
-    }
+    },
+    itemTypeEnumsOrUnitsDetails() {
+      if (this.nodeEnumsOrUnitsObj) {
+        let ret_units_table = []
+        let enumOrUnitID = null
+        let enumOrUnitLabel = null
+        let enumOrUnitDescription = null
+
+        if (this.nodeEnumsOrUnitsObj['units']) {
+          for (let i in this.nodeEnumsOrUnitsObj['units']) {
+            enumOrUnitID = i
+            enumOrUnitLabel = this.nodeEnumsOrUnitsObj['units'][i]['label']
+            enumOrUnitDescription = this.nodeEnumsOrUnitsObj['units'][i]['description']
+            let tmp_obj = {
+                "enumOrUnitID": enumOrUnitID, 
+                "enumOrUnitLabel": enumOrUnitLabel          }
+            ret_units_table.push(tmp_obj)
+          }
+        } else if (this.nodeEnumsOrUnitsObj['enums']) {
+          for (let i in this.nodeEnumsOrUnitsObj['enums']) {
+            enumOrUnitID = i
+            enumOrUnitLabel = this.nodeEnumsOrUnitsObj['enums'][i]['label']
+            enumOrUnitDescription = this.nodeEnumsOrUnitsObj['enums'][i]['description']
+            let tmp_obj = {
+                "enumOrUnitID": enumOrUnitID, 
+                "enumOrUnitLabel": enumOrUnitLabel          
+            }
+            ret_units_table.push(tmp_obj)
+          }
+
+        } 
+        return ret_units_table
+      }
+    },
+    itemTypeGroupEnumsOrUnitsDetails() {
+      if (this.nodeOBItemTypeGroupGroupObj) {
+        let ret_units_table = []
+        let enumOrUnitID = null
+        let enumOrUnitLabel = null
+        let enumOrUnitDescription = null
+        let groupFilter = this.nodeOBItemTypeGroupGroupObj['group']
+
+        if (this.nodeEnumsOrUnitsObj['units']) {
+          for (let i in this.nodeEnumsOrUnitsObj['units']) {
+            if (groupFilter.includes(i)) {
+              enumOrUnitID = i
+              enumOrUnitLabel = this.nodeEnumsOrUnitsObj['units'][i]['label']
+              enumOrUnitDescription = this.nodeEnumsOrUnitsObj['units'][i]['description']
+              let tmp_obj = {
+                  "enumOrUnitID": enumOrUnitID, 
+                  "enumOrUnitLabel": enumOrUnitLabel          
+              }
+              ret_units_table.push(tmp_obj)
+            }
+          }
+        } else if (this.nodeEnumsOrUnitsObj['enums']) {
+          for (let i in this.nodeEnumsOrUnitsObj['enums']) {
+            if (groupFilter.includes(i)) {
+              enumOrUnitID = i
+              enumOrUnitLabel = this.nodeEnumsOrUnitsObj['enums'][i]['label']
+              enumOrUnitDescription = this.nodeEnumsOrUnitsObj['enums'][i]['description']
+              let tmp_obj = {
+                  "enumOrUnitID": enumOrUnitID, 
+                  "enumOrUnitLabel": enumOrUnitLabel          
+              }
+              ret_units_table.push(tmp_obj)              
+            }
+          }
+        }
+        return ret_units_table
+      }      
+    },
+    returnItemTypeEnumsOrUnitsFields() {
+        if (this.ItemTypeType == 'enums') {
+            return this.enumFields
+        } else if (this.ItemTypeType == 'units') {
+            return this.unitFields
+        }
+    }    
   }
 };
 </script>
 
 <style>
-#detailsTable {
+.detailsTable {
   background-color: white;
 }
 
@@ -318,5 +466,26 @@ export default {
 .detailed-view-container {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.unit-row-value {
+  display: inline-block;
+
+}
+
+.unit-row-expand-details {
+  display: inline-block;
+  margin-left: 15px !important;
+}
+
+.detailed-view-container .badge {
+  margin-left: 15px;
+}
+
+.hide-unit-table-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
 }
 </style>

@@ -47,7 +47,7 @@
           variant="primary"
           >Load In</b-button
         >
-        <b-button @click="showDetailedView" size="sm">Back</b-button>
+        <b-button @click="exitView" size="sm">Back</b-button>
       </span>
     </div>
   </div>
@@ -67,8 +67,8 @@ export default {
   },
   created() {},
   methods: {
-    showDetailedView() {
-      this.$store.commit("showDetailedView");
+    exitView() {
+      this.$store.commit("showNoView");
     },
     selectDefn(index, name) {
       this.selectedDefnIndex = index;
