@@ -455,7 +455,7 @@ export default new Vuex.Store({
         payload.elementForms
       );
     },
-
+    // todo: refactor createDefinition, remove repeated code around definition type
     createDefinition(state, payload) {
       let defn_attr = {};
 
@@ -476,8 +476,7 @@ export default new Vuex.Store({
               type: "object",
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
-              "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum,
+              "x-ob-item-type-group": payload.OBItemTypeGroup,
               "x-ob-usage-tips": payload.OBUsageTips,
               "x-ob-sample-value": payload.OBSampleValue
             }
@@ -494,8 +493,7 @@ export default new Vuex.Store({
               type: "object",
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
-              "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum,
+              "x-ob-item-type-group": payload.OBItemTypeGroup,
               "x-ob-usage-tips": payload.OBUsageTips,
               "x-ob-sample-value": payload.OBSampleValue
             }
@@ -512,8 +510,7 @@ export default new Vuex.Store({
               type: "object",
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
-              "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum,
+              "x-ob-item-type-group": payload.OBItemTypeGroup,
               "x-ob-usage-tips": payload.OBUsageTips,
               "x-ob-sample-value": payload.OBSampleValue
             }
@@ -530,8 +527,7 @@ export default new Vuex.Store({
               type: "object",
               description: payload.definitionDescription,
               "x-ob-item-type": payload.OBItemType,
-              "x-ob-unit": payload.OBUnits,
-              "x-ob-enum": payload.OBEnum,
+              "x-ob-item-type-group": payload.OBItemTypeGroup,
               "x-ob-usage-tips": payload.OBUsageTips,
               "x-ob-sample-value": payload.OBSampleValue
             }
