@@ -78,28 +78,35 @@
         <b-form-select
           id="node-item-type-input"
           v-model="selectedOBItemType"
-          :options="OBItemTypes"
+          :options="allItemTypesComputed"
           :disabled="!preSubmit"
           :state="Boolean(selectedOBItemType)"
         ></b-form-select>
       </b-form-group>
 
-      <span v-if="selectedOBItemType">
-        <span v-if="selectedOBItemType.includes('solar-types')">
-          <b-table
-            :items="itemTypeUnits"
-            class="detailsTable"
-            ref="itemTypeUnitsTable"
-          ></b-table>
-        </span>
-        <span v-else>
-          <b-table
-            :items="itemTypeUnits"
-            class="detailsTable"
-            ref="itemTypeUnitsTable"
-          ></b-table>
-        </span>
-      </span>
+      <b-form-group
+        label="Item Type Group:"
+        label-for="create-def-item-type-group-input"
+        v-if="selectedOBItemType"
+      >
+        <b-form-select
+          id="create-def-item-type-group-input"
+          v-model="selectedItemTypeGroup"
+          :options="allPossibleItemTypeGroups"
+        ></b-form-select>
+      </b-form-group>
+
+      <!-- <div class="enum-or-unit-table-container" v-if="selectedOBItemTypeType">              
+        <b-table 
+            @row-selected="onRowSelected" 
+            selectable 
+            select-mode="single"
+            :fields="returnEnumOrUnitFields(selectedOBItemTypeType)" 
+            :items="itemTypeEnumsOrUnitsComputed" 
+            class="item-type-table"
+        >
+        </b-table>
+      </div> -->
 
       <span v-if="definitionType == 'OB Array'">
         <div>Choose array item:</div>
@@ -162,26 +169,20 @@
 
 <script>
 import * as miscUtilities from "../../utils/miscUtilities";
-import solarTypes from "@/assets/type_files/solar-types-units.json";
-import utrTypes from "@/assets/type_files/utr-units.json";
 
 export default {
   created() {
-    let solar_types = []
-    let utr_types = []
-    Object.keys(solarTypes).forEach(key => {
-      solar_types.push(key);
-    });
-    Object.keys(utrTypes).forEach(key => {
-      utr_types.push(key);
-    });
-    solar_types.sort()
-    utr_types.sort()
-    this.OBItemTypes = this.OBItemTypes.concat(solar_types).concat(utr_types)
-
+    this.allItemTypes = this.$store.state.loadedFiles[this.$store.state.selectedFileName]["item_types"]
+    this.allItemTypeGroups = this.$store.state.loadedFiles[this.$store.state.selectedFileName]["item_type_groups"]
   },
   data() {
     return {
+      allItemTypes: null,
+      selectedOBItemTypeType: null,
+      selectedOBItemTypeDescription: null,
+      selectedOBItemTypeEnumsOrUnits: [],
+      selectedItemTypeGroup: '',
+      possibleItemTypeGroups: [],
       definitionName: null,
       definitionType: null,
       definitionDescription: null,
@@ -201,12 +202,19 @@ export default {
       selectedDefnIndex: null,
       selectedDefnName: null,
 
-      OBItemTypes: [],
       selectedOBItemType: null,
-      selectedOBUnits: null,
-      selectedOBEnum: null,
       selectedOBUsageTips: "",
-      selectedOBSampleValue: null
+      selectedOBSampleValue: null,
+      unitFields: [
+          { key: "enumOrUnitID", label: "Unit ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Unit Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Unit Description"}
+      ],
+      enumFields: [
+          { key: "enumOrUnitID", label: "Enum ID", thStyle: { width: "150px" } }, 
+          { key: "enumOrUnitLabel", label: "Enum Label", thStyle: { width: "150px" } },
+          { key: "enumOrUnitDescription", label: "Enum Description"}
+      ],         
     };
   },
   methods: {
@@ -218,6 +226,9 @@ export default {
         return false;
       }
     },
+    onRowSelected(items) {
+        this.selectedEnumOrUnit = items
+    },    
     exitView() {
       this.definitionName = null;
       this.definitionType = null;
@@ -260,8 +271,7 @@ export default {
         arrayItemDefnName: this.selectedDefnName,
         arrayItemFileName: this.selectedFileName,
         OBItemType: this.selectedOBItemType,
-        OBUnits: this.selectedOBUnits,
-        OBEnum: this.selectedOBEnum,
+        OBItemTypeGroup: this.selectedItemTypeGroup,
         OBUsageTips: this.selectedOBUsageTips,
         OBSampleValue: JSON.parse(this.selectedOBSampleValue)
       };
@@ -274,26 +284,33 @@ export default {
       this.selectedDefnName = definitionName;
       this.showErrorInfinite = false;
       this.showErrorConflict = false;
+    },
+    returnEnumOrUnitFields(itemTypeType) {
+      if (itemTypeType == 'units') {
+          return this.unitFields
+      } else if (itemTypeType == 'enums') {
+          return this.enumFields
+      }
+    },
+    findPossibleItemTypeGroups() {
+      for (let i in this.allItemTypeGroups) {
+        if (this.allItemTypeGroups[i]['type'].includes(this.selectedOBItemType)) {
+          this.possibleItemTypeGroups.push(i)
+        }
+      }
+      this.possibleItemTypeGroups.push({value: '', text: 'None'})
     }
   },
   computed: {
-    itemTypeUnits() {
-      this.selectedOBUnits = '';
-      this.selectedOBEnum = '';
-      let retArr = [];
-      if (this.selectedOBItemType) {
-        if (this.selectedOBItemType.includes("solar-types")) {
-          this.selectedOBEnum = solarTypes[this.selectedOBItemType];
-
-          retArr = [{ Attributes: "OB Enum", Values: this.selectedOBEnum }];
-        } else {
-          this.selectedOBUnits = utrTypes[this.selectedOBItemType];
-
-          retArr = [{ Attributes: "OB Units", Values: this.selectedOBUnits }];
-        }
+    allItemTypesComputed() {
+      let ret_arr = []
+      let itemTypeName = ''
+      for (let i in this.allItemTypes) {
+          itemTypeName = i
+          ret_arr.push(itemTypeName)
       }
 
-      return retArr
+      return ret_arr.sort()
     },
     fileElements() {
       if (this.selectedFileName) {
@@ -441,6 +458,12 @@ export default {
       let arr = temp_ret_obj;
 
       return arr;
+    },
+    itemTypeEnumsOrUnitsComputed() {
+      return this.selectedOBItemTypeEnumsOrUnits
+    },
+    allPossibleItemTypeGroups() {
+      return this.possibleItemTypeGroups
     }
   },
   watch: {
@@ -486,6 +509,70 @@ export default {
       this.selectedDefnIndex = null;
       this.selectedDefnName = null;
       this.searchTerm = "";
+    },
+    selectedOBItemType() {
+      if (this.selectedOBItemType) {
+        this.selectedOBItemTypeType = ''
+        this.selectedOBItemTypeDescription = ''
+        this.selectedOBItemTypeEnumsOrUnits = []
+
+        let enumOrUnitID = ''
+        let enumOrUnitLabel = ''
+        let enumOrUnitDescription = ''
+
+        let currentItemTypeObj = this.allItemTypes[this.selectedOBItemType]
+        this.findPossibleItemTypeGroups()
+        if ("description" in currentItemTypeObj)
+            this.selectedOBItemTypeDescription = currentItemTypeObj["description"]
+
+          // refactor: repeated code
+        if ("enums" in currentItemTypeObj) {
+          this.selectedOBItemTypeType = 'enums'
+          for (let i in currentItemTypeObj['enums']) {
+            enumOrUnitID = i
+            if ('label' in currentItemTypeObj['enums'][i]) {
+                enumOrUnitLabel = currentItemTypeObj['enums'][i]['label']
+            } else {
+                enumOrUnitLabel = ''
+            }
+
+            if ('description' in currentItemTypeObj['enums'][i]) {
+                enumOrUnitDescription = currentItemTypeObj['enums'][i]['description']
+            } else {
+                enumOrUnitDescription = ''
+            }                        
+
+            this.selectedOBItemTypeEnumsOrUnits.push({
+                'enumOrUnitID': enumOrUnitID,
+                'enumOrUnitLabel': enumOrUnitLabel,
+                'enumOrUnitDescription': enumOrUnitDescription
+            })
+          }
+        } else if ("units" in currentItemTypeObj) {
+          this.selectedOBItemTypeType = 'units' 
+          for (let i in currentItemTypeObj['units']) {
+            enumOrUnitID = i
+            if ('label' in currentItemTypeObj['units'][i]) {
+                enumOrUnitLabel = currentItemTypeObj['units'][i]['label']
+            } else {
+                enumOrUnitLabel = ''
+            }
+
+            if ('description' in currentItemTypeObj['units'][i]) {
+                enumOrUnitDescription = currentItemTypeObj['units'][i]['description']
+            } else {
+                enumOrUnitDescription = ''
+            }     
+
+            this.selectedOBItemTypeEnumsOrUnits.push({
+                'enumOrUnitID': enumOrUnitID,
+                'enumOrUnitLabel': enumOrUnitLabel,
+                'enumOrUnitDescription': enumOrUnitDescription
+            })
+          }
+        }
+        console.log(this.possibleItemTypeGroups)
+      }
     }
   }
 };
