@@ -534,13 +534,17 @@ export default new Vuex.Store({
           ]
         };
       } else if (payload.definitionType == "OB Array") {
+        let ref = ''
+        if (state.currentFile.fileName == payload.arrayItemFileName) {
+          ref = "#/components/schemas/" + payload.arrayItemDefnName
+        } else {
+          ref = payload.arrayItemFileName + "#/components/schemas/" + payload.arrayItemDefnName
+        }
+
         defn_attr = {
           type: "array",
           items: {
-            $ref:
-              payload.arrayItemFileName +
-              "#/components/schemas/" +
-              payload.arrayItemDefnName
+            $ref: ref
           }
         };
       }
