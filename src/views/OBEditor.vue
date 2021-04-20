@@ -856,6 +856,7 @@ export default {
       this.$store.state.currentFile = this.$store.state.fileTabs[
         this.$store.state.currentTabIndexFileEditor
       ];
+
       if (this.$store.state.currentFile)
         this.$store.state.selectedFileName = this.$store.state.currentFile["fileName"]
 

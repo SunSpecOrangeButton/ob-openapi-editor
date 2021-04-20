@@ -71,11 +71,12 @@ export default {
               "allOf"
             ][i]["$ref"].includes(this.selectedSuperClass)
           ) {
-            this.selectedSuperClassRefFile = miscUtilities.getRefFileContext(
-              this.$store.state.currentFile.file[this.$store.state.isSelected][
-                "allOf"
-              ][i]["$ref"]
-            );
+            this.selectedSuperClassRefFile = this.$store.state.currentFile.fileName
+            // this.selectedSuperClassRefFile = miscUtilities.getRefFileContext(
+            //   this.$store.state.currentFile.file[this.$store.state.isSelected][
+            //     "allOf"
+            //   ][i]["$ref"]
+            // );
           }
         }
       }

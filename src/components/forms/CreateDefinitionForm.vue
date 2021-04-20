@@ -571,7 +571,6 @@ export default {
             })
           }
         }
-        console.log(this.possibleItemTypeGroups)
       }
     }
   }

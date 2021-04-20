@@ -368,7 +368,7 @@ export default {
             fromSuperClass = true;
           }
 
-          if (fileReference[key]["type"] == "object") {
+          if ("type" in fileReference[key] && fileReference[key]["type"] == "object") {
             nodeType = "Object";
 
             if (fromSuperClass) {
@@ -412,7 +412,7 @@ export default {
                 ]);
               }
             }
-          } else if (fileReference[key]["allOf"]) {
+          } else if ("allOf" in fileReference[key]) {
             for (let i in fileReference[key]["allOf"]) {
               if (fileReference[key]["allOf"][i]["$ref"]) {
                 superClass_lst.push(fileReference[key]["allOf"][i]["$ref"]);
@@ -480,7 +480,7 @@ export default {
                 ]);
               }
             }
-          } else if (fileReference[key]["type"] == "array") {
+          } else if ("type" in fileReference[key] && fileReference[key]["type"] == "array") {
             nodeType = "Array";
             arr_item = fileReference[key]["items"]["$ref"];
             arr_lst.push([
