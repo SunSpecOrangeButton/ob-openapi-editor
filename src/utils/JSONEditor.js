@@ -219,19 +219,19 @@ export function addSuperClass(
     for (let i of JSONFile[workingFile].allOf) {
       if (
         i["ref"] ==
-        superClassRefFileName + "#/components/schemas/" + superClassName
+        "#/components/schemas/" + superClassName
       ) {
         refExists = true;
       }
     }
     if (!refExists) {
       JSONFile[subClassName].allOf.push({
-        $ref: superClassRefFileName + "#/components/schemas/" + superClassName
+        $ref: "#/components/schemas/" + superClassName
       });
     }
   } else {
     allOfArr.push({
-      $ref: superClassRefFileName + "#/components/schemas/" + superClassName
+      $ref: "#/components/schemas/" + superClassName
     });
     allOfArr.push(JSON.parse(JSON.stringify(workingFile[subClassName])));
     allOfObj = {
@@ -307,10 +307,105 @@ export function createNewDefnFile(title, description, fileName) {
   return returnNewFileObj;
 }
 
+// todo: handle loading in inheritance
 export function loadInDefinition(workingFile, defnName, refFile) {
-  let defnObj = {
-    $ref: refFile + "#/components/schemas/" + defnName
-  };
+  let dependenciesToAdd = getObjChildren(refFile, defnName)
+  let elToAdd = []
+  let objToAdd = []
+  let alreadyAdded = []
 
-  Vue.set(workingFile, defnName, defnObj);
+  for (let i = 0; i < dependenciesToAdd.length; i++) {
+    if (dependenciesToAdd[i]["type"] == "object" || dependenciesToAdd[i]["type"] == "array") {
+      objToAdd.push(dependenciesToAdd[i]["defnName"])
+    } else {
+      elToAdd.push(dependenciesToAdd[i]["defnName"])
+    }
+  }
+
+  for (let i = 0; i < elToAdd.length; i++) {
+    if (!alreadyAdded.includes(elToAdd[i])) {
+      alreadyAdded.push(elToAdd[i])
+      Vue.set(workingFile, elToAdd[i], refFile[elToAdd[i]]);
+    }
+  }
+
+  for (let i = 0; i < objToAdd.length; i++) {
+    if (!alreadyAdded.includes(objToAdd[i])) {
+      alreadyAdded.push(objToAdd[i])
+
+      Vue.set(workingFile, objToAdd[i], refFile[objToAdd[i]]);
+    }
+  }
+
+  // todo: needs error handling and error reporting
+}
+
+export function getDefnNameFromRef(ref) {
+  return ref.slice(ref.lastIndexOf("/") + 1)
+}
+
+// returns a list of dependencies of an obj
+export function getObjChildren(refFile, defnName) {
+  // don't need to pull in these objects if they are referenced as superclass
+  var superClassWhiteList = ["TaxonomyElementString", "TaxonomyElementNumber", 
+    "TaxonomyElementInteger", "TaxonomyElementBoolean"]
+  // don't re-add primitives
+  var primitiveWhiteList = ["Value", "Unit", "Decimals", "Precision", "StartTime", "EndTime"]
+  let dependencies = []
+
+  let defnObj = refFile[defnName]
+
+  if (defnObj["type"] == "object") {
+    dependencies.push(
+      {
+        "type": "object",
+        "defnName": defnName
+      }
+    )
+    for (let i in defnObj["properties"]) {
+      dependencies = dependencies.concat(getObjChildren(refFile, i))
+    }
+  } else if (defnObj["type"] == "array") {
+    dependencies.push(
+      {
+        "type": "array",
+        "defnName": defnName
+      }
+    )
+    let item = getDefnNameFromRef(defnObj["items"]["$ref"])
+
+    dependencies = dependencies.concat(getObjChildren(refFile, item))
+      
+  } else {
+    if (!primitiveWhiteList.includes(defnName)) {
+      for (let i in defnObj["allOf"]) {
+        if ("$ref" in defnObj["allOf"][i]) {
+          if (superClassWhiteList.includes(getDefnNameFromRef(defnObj["allOf"][i]["$ref"]))) {
+            dependencies.push(
+              {
+                "type": "element",
+                "defnName": defnName
+              }
+            )
+          } else {
+            dependencies.push(
+              {
+                "type": "object",
+                "defnName": defnName
+              }
+            )            
+  
+            dependencies = dependencies.concat(getObjChildren(refFile, getDefnNameFromRef(defnObj["allOf"][i]["$ref"])))
+          }
+        } else if ("properties" in defnObj["allOf"][i]) {
+          for (let j in defnObj["allOf"][i]["properties"]) {
+            
+            dependencies = dependencies.concat(getObjChildren(refFile, j))
+          }
+        }
+      }
+    }
+  }
+
+  return dependencies
 }

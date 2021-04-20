@@ -45,11 +45,23 @@
           :disabled="!selectedDefnName"
           size="sm"
           variant="primary"
-          >Load In</b-button
+          >{{ loadInText }}</b-button
         >
         <b-button @click="exitView" size="sm">Back</b-button>
       </span>
+      <span id="load-in-alert-container">
+        <b-alert
+          id="load-in-success-alert"
+          v-model="dismissCountDown"
+          dismissible
+          fade
+          variant="success"
+        >
+          Success
+        </b-alert>
+      </span>
     </div>
+
   </div>
 </template>
 
@@ -62,10 +74,12 @@ export default {
       selectedFile: null,
       selectedDefnIndex: null,
       selectedDefnName: null,
-      searchTerm: ""
+      searchTerm: "",
+      dismissCountDown: 0,
+      dismissSecs: 2,
+      loadInText: "Load In"
     };
   },
-  created() {},
   methods: {
     exitView() {
       this.$store.commit("showNoView");
@@ -79,8 +93,16 @@ export default {
         type: "loadInDefinition",
         defnFile: this.selectedFile,
         defnName: this.selectedDefnName
-      });
-    }
+      })
+      this.loadInText = 'Load in another'
+      this.showAlert()
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs
+    }    
   },
   computed: {
     getLoadedFiles() {
@@ -144,7 +166,7 @@ export default {
 
             if (typeOfDefn == "ObjWithInherit") {
               if (defnFile[defnName]["allOf"][i]["properties"]) {
-                defnObjChildren = Object.keys(defnFile[defnName]["properties"]);
+                defnObjChildren = Object.keys(defnFile[defnName]["allOf"][i]["properties"]);
               }
             }
           }
@@ -280,9 +302,25 @@ export default {
 
 #load-in-defn-footer {
   grid-row: 2 / 3;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  border: #d3d3d3 solid 1px;
+}
+
+#edit-form-buttons {
+  grid-column: 2 / 3;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: #d3d3d3 solid 1px;
+}
+
+#load-in-alert-container {
+  grid-column: 3 / 4;
+  display: flex;
+  justify-content: center
+}
+
+#load-in-success-alert {
+  max-height: 40px;
 }
 </style>

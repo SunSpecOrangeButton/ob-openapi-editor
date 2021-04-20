@@ -470,7 +470,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementString"
+                "#/components/schemas/TaxonomyElementString"
             },
             {
               type: "object",
@@ -487,7 +487,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementNumber"
+                "#/components/schemas/TaxonomyElementNumber"
             },
             {
               type: "object",
@@ -504,7 +504,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementInteger"
+                "#/components/schemas/TaxonomyElementInteger"
             },
             {
               type: "object",
@@ -521,7 +521,7 @@ export default new Vuex.Store({
           allOf: [
             {
               $ref:
-                "Master-Solar-Taxonomy.json#/components/schemas/TaxonomyElementBoolean"
+                "#/components/schemas/TaxonomyElementBoolean"
             },
             {
               type: "object",
@@ -673,11 +673,11 @@ export default new Vuex.Store({
       }
     },
     loadInDefinition(state, payload) {
-      let defnName = payload.defnName;
-      let defnFile = payload.defnFile;
+      let defnNameToLoad = payload.defnName;
+      let defnFileToLoadFrom = state.loadedFiles[payload.defnFile]["file"]
       let currentFile = state.currentFile.file;
 
-      JSONEditor.loadInDefinition(currentFile, defnName, defnFile);
+      JSONEditor.loadInDefinition(currentFile, defnNameToLoad, defnFileToLoadFrom);
     },
     changeItemType(state, payload) {
 
