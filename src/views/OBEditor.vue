@@ -1364,4 +1364,8 @@ export default {
   background-color: #fff !important;
   border-color: #d3d3d3 #d3d3d3 #fff !important;
 }
+
+button {
+  z-index: 9999999;
+}
 </style>

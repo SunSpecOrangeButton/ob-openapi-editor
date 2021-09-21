@@ -67,7 +67,7 @@ Component for adding members to objects
           <span v-else>Add another</span>
         </b-button>
         <b-button @click="goPreviousView" size="sm">Back</b-button>
-      </span>
+      </span>      
     </div>
   </div>
 </template>
@@ -341,5 +341,6 @@ export default {
   justify-content: center;
   align-items: center;
   border-top: #d3d3d3 solid 1px;
+  z-index: 999999999;
 }
 </style>
