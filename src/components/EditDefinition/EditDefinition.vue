@@ -49,6 +49,8 @@ Is the parent of all the editing components
       >Change Item Type Group</b-button>        
       <b-button class="edit-btn" variant="secondary" @click="editUsageTips">Edit Usage Tips</b-button>
       <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement" @click="editSampleValue">Edit Sample</b-button>
+      <b-button class="edit-btn" variant="secondary" v-if="this.$store.state.isTaxonomyElement || $store.state.nodeType == 'object' || $store.state.nodeType == 'element'" 
+        @click="changeName">Change Name</b-button>      
     </span>
     <div
       class="previous-view-button"
@@ -71,6 +73,7 @@ import ChangeItemType from "./ChangeItemType.vue";
 import ChangeItemTypeGroup from "./ChangeItemTypeGroup.vue"
 import EditUsageTips from "./EditUsageTips";
 import EditSampleValue from "./EditSampleValue";
+import ChangeName from "./ChangeName"
 
 import * as JSONEditor from "../../utils/JSONEditor.js";
 import * as miscUtilities from "../../utils/miscUtilities.js";
@@ -87,7 +90,8 @@ export default {
     ChangeItemType,
     ChangeItemTypeGroup,    
     EditUsageTips,
-    EditSampleValue
+    EditSampleValue,
+    ChangeName
   },
   data() {
     return {
@@ -145,6 +149,9 @@ export default {
     },
     editSampleValue() {
       this.$store.state.activeEditingView = "EditSampleValue";
+    },
+    changeName() {
+      this.$store.state.activeEditingView = "ChangeName";
     }
   },
   computed: {

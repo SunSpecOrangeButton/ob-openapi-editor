@@ -103,6 +103,53 @@ export function editNode(JSONFile, nodeName, newDescription) {
   }
 }
 
+//change name
+export function changeName(JSONFile, currentNodeName, newNodeName) {
+  let tmp = JSON.parse(JSON.stringify(JSONFile[currentNodeName]))
+  Vue.set(JSONFile, newNodeName, tmp)
+  for (let i in JSONFile) {
+    tmp = null
+    if (JSONFile[i]["properties"]) {
+      if (JSONFile[i]["properties"][currentNodeName]) {
+        tmp = JSON.parse(JSON.stringify(JSONFile[i]["properties"][currentNodeName]))
+        Vue.delete(JSONFile[i]["properties"], currentNodeName);
+        tmp["$ref"] = tmp["$ref"].replace(currentNodeName, newNodeName)
+        Vue.set(JSONFile[i]["properties"], newNodeName, tmp)
+      }
+    } else if (JSONFile[i]["allOf"]) {
+      for (let j in JSONFile[i]["allOf"]) {
+        if (JSONFile[i]["allOf"][j]["$ref"]) {
+          let superClassSubStringIndex = JSONFile[i]["allOf"][j]["$ref"].lastIndexOf("/") + 1
+          let superClassSubString = JSONFile[i]["allOf"][j]["$ref"].slice(superClassSubStringIndex)
+          if (superClassSubString == currentNodeName) {
+            tmp = JSONFile[i]["allOf"][j]["$ref"]
+            Vue.delete(JSONFile[i]["allOf"][j], "$ref")
+            tmp = tmp.replace(currentNodeName, newNodeName)
+            Vue.set(JSONFile[i]["allOf"][j], "$ref", tmp)
+          }
+        } else if (JSONFile[i]["allOf"][j]["properties"]) {
+          if (JSONFile[i]["allOf"][j]["properties"][currentNodeName]) {
+            tmp = JSON.parse(JSON.stringify(JSONFile[i]["allOf"][j]["properties"][currentNodeName]))
+            Vue.delete(JSONFile[i]["allOf"][j]["properties"], currentNodeName);
+            tmp["$ref"] = tmp["$ref"].replace(currentNodeName, newNodeName)
+            Vue.set(JSONFile[i]["allOf"][j]["properties"], newNodeName, tmp)
+          }
+        }
+      }
+    } else if (JSONFile[i]["items"]) {
+      if (JSONFile[i]["items"]["$ref"]) {
+        let arrayRefIndex = JSONFile[i]["items"]["$ref"].lastIndexOf("/") + 1
+        let arrayRefSubString = JSONFile[i]["items"]["$ref"].slice(arrayRefIndex)       
+        if (arrayRefSubString == currentNodeName) {
+          tmp = JSONFile[i]["items"]["$ref"]
+          Vue.delete(JSONFile[i]["items"], "$ref")
+          tmp = tmp.replace(currentNodeName, newNodeName)
+          Vue.set(JSONFile[i]["items"], "$ref", tmp)
+        } 
+      }
+    }
+  }
+}
 //Create node
 export function createNodeElement(
   JSONFile,

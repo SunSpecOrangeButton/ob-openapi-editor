@@ -187,6 +187,18 @@ export default new Vuex.Store({
       state.nodeDescription = payload.nodeDescription;
     },
 
+    /* 
+      Change Name
+    */
+    changeName(state, payload) {
+      JSONEditor.changeName(
+        state.currentFile.file,
+        payload.nodeName,
+        payload.newNodeName
+      )
+      state.nodeName = payload.newNodeName
+      Vue.delete(state.currentFile.file, payload.nodeName)
+    },
     /*
       Add Inheritance
     */
